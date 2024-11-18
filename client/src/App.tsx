@@ -1,24 +1,15 @@
-import React from 'react';
-import './App.css';
-import { socket } from "../connection/Client";
+import { Route, Routes } from 'react-router-dom';
+import { LoginRoute } from './components/LoginRoute';
+import { useConnection } from './hooks/useConnection';
 
-export function App()
+export default function App()
 {
-    const [isConnected, setIsConnected] = React.useState(socket.connected);
+    useConnection();
 
-    React.useEffect((): void =>
-    {
-        socket.on("connect", () => setIsConnected(true));
-        socket.on("disconnect", () => setIsConnected(false));
-        socket.connect();
-    }, []);
-
-    console.log("Status:", isConnected ? "connected" : "disconnected");
-
-    const name: string | null = localStorage.getItem("name");
-    
-    if (name == null)
-        return <Login />;
-
-    return <LoggedIn name={name} />;
+    return <div className='root'>
+		<Routes>
+			<Route path="/" element={<LoginRoute />} />
+			<Route path="/game" element={<div>Пизда</div>} />
+		</Routes>
+	</div>;
 };
