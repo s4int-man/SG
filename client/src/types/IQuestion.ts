@@ -4,6 +4,8 @@ export interface IQuestionSimple
     price: number;
     text: string;
     answer: string;
+    completed?: boolean;
+    playerAnswered?: boolean;
 }
 
 export interface IQuestionImage extends IQuestionSimple

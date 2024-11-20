@@ -1,42 +1,37 @@
 import React from "react";
-import { ICategory } from "../types/IGame";
-import { ICompletedQuestion, IRoundProgress } from "../types/IProgress";
+import { ICategory, IGame } from "../types/IGame";
 import { socket } from "../connection/Client";
 import { Category } from "./Category";
+import { useSelector } from "react-redux";
+import { RootState } from "../types/RootState";
+import { createSelector } from "@reduxjs/toolkit";
 
-export const Categories = (props: { roundId: number }) =>
+export const Categories = () =>
 {
-    const [ categories, setCategories ] = React.useState<ICategory[]>([]);
-    const [ completed, setCompleted ] = React.useState<ICompletedQuestion[]>([]);
+    const currentRound = useSelector((state: RootState) => state.gameReducer.currentRound);
+    const categories: ICategory[] | null = useSelector(createSelector(
+        (state: RootState): IGame => state.gameReducer.progress,
+        (state: RootState): number => state.gameReducer.currentRound,
+        (progress, currentRound): ICategory[] | null => progress.rounds[currentRound]
+    ));
     
     React.useEffect(() =>
     {
-        socket.on("progress", (progress: IRoundProgress[]): void =>
-        {
-            console.log("progress", progress);
-
-            const result = progress[props.roundId];
-
-            if (result != null)
-                setCompleted(result.completedQuestions);
-            else
-                setCompleted([]);
-        });
-
         socket.on("question", (data: { roundId: number, category: string, questionId: number }) =>
         {
             console.log("Move to", data);
         });
+    }, [ currentRound ]);
 
-        socket.emit("progress");
-    }, [ props ]);
+    if (categories == null)
+        return null;
     
     return <div className="table center-block">
         {
             categories
                 .map((category: ICategory): React.ReactElement =>
                 {
-                    return <Category key={category.name} {...category} roundId={props.roundId} completed={completed} />;
+                    return <Category key={category.name} {...category} roundId={currentRound} />;
                 })
         }
     </div>;

@@ -1,16 +1,14 @@
+import express from 'express';
 import { createServer } from "node:http";
-import next from "next";
 import { Server } from "socket.io";
-import { loadProgress } from "./progressUtils.mjs";
+import { loadPlayers, loadProgress } from "./progressUtils.mjs";
 
-const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
-const port = 3000;
-// when using middleware `hostname` and `port` must be provided below
-const app = next({ dev, hostname, port });
-const handler = app.getRequestHandler();
+const port = 4000;
 
-let { players, progress } = loadProgress();
+let progress = loadProgress();
+let players = loadPlayers();
+
 console.log("players", players);
 console.log("progress", progress);
 
@@ -40,63 +38,69 @@ function disconnectPlayer(name)
     players = players.filter(p => p.name != name);
 }
 
-app.prepare().then(() => {
-    const httpServer = createServer(handler);
+const app = express();
 
-    const io = new Server(httpServer);
+const httpServer = createServer(app);
 
-    io.on("connection", (socket) => {
-        socket.on("login", (name) =>
+const io = new Server(httpServer, {
+    cors: {
+      origin: "*",
+    },
+});
+
+io.on("connection", (socket) => {
+    socket.on("login", (name) =>
+    {
+        console.log(name, "logged in");
+
+        addPlayer(name);
+
+        socket.emit("hello");
+        socket.emit("progress", progress);
+        io.sockets.emit("players", players);
+
+        socket.once("disconnect", () =>
         {
-            console.log(name, "logged in");
-
-            addPlayer(name);
-
+            console.log(name, "disconnected");
+            disconnectPlayer(name);
             socket.broadcast.emit("players", players);
-
-            socket.once("disconnect", () =>
-            {
-                console.log(name, "disconnected");
-                disconnectPlayer(name);
-                socket.broadcast.emit("players", players);
-            });
-        });
-
-        socket.on("progress", () =>
-        {
-            console.log("request progress");
-            socket.emit("progress", progress);
-        });
-
-        socket.on("players", () =>
-        {
-            console.log("request players");
-            socket.emit("players", players);
-        });
-
-        socket.on("question", (roundId, category, questionId) =>
-        {
-            console.log("question", roundId, category, questionId);
-            socket.emit("question", { roundId, category, questionId });
-        });
-
-        socket.on("right", (category, id, score) =>
-        {
-            console.log("right", category, id, score);
-        });
-
-        socket.on("wrong", (category, id, score) =>
-        {
-            console.log("right", category, id, score);
         });
     });
 
-    httpServer
-        .once("error", (err) => {
-            console.error(err);
-            process.exit(1);
-        })
-        .listen(port, () => {
-            console.log(`> Ready on http://${hostname}:${port}`);
-        });
+    socket.on("progress", () =>
+    {
+        console.log("request progress");
+        socket.emit("progress", progress);
+    });
+
+    socket.on("players", () =>
+    {
+        console.log("request players");
+        socket.emit("players", players);
+    });
+
+    socket.on("question", (roundId, category, questionId) =>
+    {
+        console.log("question", roundId, category, questionId);
+        socket.emit("question", { roundId, category, questionId });
+    });
+
+    socket.on("right", (category, id, score) =>
+    {
+        console.log("right", category, id, score);
+    });
+
+    socket.on("wrong", (category, id, score) =>
+    {
+        console.log("right", category, id, score);
+    });
 });
+
+httpServer
+    .once("error", (err) => {
+        console.error(err);
+        process.exit(1);
+    })
+    .listen(port, () => {
+        console.log(`> Ready on http://${hostname}:${port}`);
+    });

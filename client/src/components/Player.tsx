@@ -1,5 +1,5 @@
 
-import styles from "@/styles/Player.module.css";
+import styles from "../styles/Player.module.css";
 import { IPlayer } from "../types/IProgress";
 
 export function Player(props: IPlayer)

@@ -7,9 +7,6 @@ export function LoggedIn(props: { name: string, setName: (name: string | null) =
 {
     const yesClick = (): void =>
     {
-        if (!socket.connected)
-            alert("Ты не подключен. Иди к Святому");
-
         socket.emit("login", props.name);
     }
 

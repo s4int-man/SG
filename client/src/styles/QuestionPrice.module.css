@@ -1,4 +1,5 @@
 .price {
+    flex-grow: 1;
     padding: 20px;
     height: 80px;
     display: flex;
@@ -6,5 +7,24 @@
     justify-content: center;
     font-size: 32px;
     border: 1px solid;
-    width: 100px;
+    flex-basis: 10%;
+    min-width: 100px;
+    cursor: pointer;
+}
+
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.selected {
+    opacity: 0.5;
+    animation: 500ms blink infinite;
 }

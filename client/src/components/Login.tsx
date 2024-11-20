@@ -8,23 +8,15 @@ export function Login()
 {
     const [text, setText] = React.useState("");
 
-    // const router = useRouter();
-
-    const onChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>): void =>
     {
         setText(e.target.value);
     }
 
     const onClick = (): void =>
     {
-        // console.log("Login as", text);
         localStorage.setItem("name", text);
-
-        if (!socket.connected)
-            alert("Ты не подключен. Иди к Святому");
-
         socket.emit("login", text);
-        // router.push("/rounds/0");
     }
 
     return <div className={styles.login}>
