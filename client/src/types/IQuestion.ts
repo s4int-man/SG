@@ -5,7 +5,7 @@ export interface IQuestionSimple
     text: string;
     answer: string;
     completed?: boolean;
-    playerAnswered?: boolean;
+    answerPlayer?: string;
 }
 
 export interface IQuestionImage extends IQuestionSimple
@@ -14,3 +14,5 @@ export interface IQuestionImage extends IQuestionSimple
 }
 
 export type IQuestion = IQuestionImage | IQuestionSimple;
+
+export type ISelectedQuestion = { roundId: number, category: string, questionId: number };

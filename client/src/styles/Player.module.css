@@ -1,7 +1,19 @@
 .player {
-    color: red;
+    background-color: red;
+    color: white;
+    padding: 20px;
+    height: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    border: 1px solid;
+    width: 190px;
+    cursor: pointer;
+    opacity: 0.8;
 }
 
 .online {
-    color: green;
+    background-color: green;
 }

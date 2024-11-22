@@ -4,7 +4,13 @@ import { IPlayer } from "../types/IProgress";
 
 export function Player(props: IPlayer)
 {
+    if (props.name === "Святой")
+        return null;
+    if (props.name === "TV")
+        return null;
+
     return <div className={`${styles.player} ${props.online ? styles.online : ""}`}>
-        {props.name}: {props.score} очков
+        <div className="name">{props.name}</div>
+        <div className="score">{props.score} очков</div>
     </div>;
 }

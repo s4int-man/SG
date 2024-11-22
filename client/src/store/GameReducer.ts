@@ -1,7 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { IPlayer } from "../types/IProgress";
 import { IGame } from "../types/IGame";
-import { IQuestion } from "../types/IQuestion";
+import { IQuestion, ISelectedQuestion } from "../types/IQuestion";
 
 interface IGameState
 {
@@ -9,7 +9,18 @@ interface IGameState
 	progress: IGame;
 	currentRound: number;
 	currentQuestion: IQuestion | null;
+	selectedQuestion: ISelectedQuestion | null;
+	answerPlayer: IPlayer | null;
 }
+
+const initialState: IGameState = {
+	players: [],
+	progress: { rounds: [] },
+	currentRound: 0,
+	selectedQuestion: null,
+	currentQuestion: null,
+	answerPlayer: null,
+};
 
 function setPlayers(state: IGameState, action: PayloadAction<IPlayer[]>): void
 {
@@ -21,22 +32,36 @@ function setProgress(state: IGameState, action: PayloadAction<IGame>): void
 	state.progress = action.payload;
 }
 
-function setSelectedQuestion(state: IGameState, action: PayloadAction<IQuestion>): void
+function setSelectedQuestion(state: IGameState, action: PayloadAction<ISelectedQuestion>): void
+{
+	state.selectedQuestion = action.payload;
+}
+
+function setCurrentQuestion(state: IGameState, action: PayloadAction<IQuestion>): void
 {
 	state.currentQuestion = action.payload;
 }
 
+function setAnswerPlayer(state: IGameState, action: PayloadAction<string | null>): void
+{
+	if (action.payload == null)
+	{
+		state.answerPlayer = null;
+		return;
+	}
+
+	const player = state.players.find(p => p.name === action.payload)!;
+	state.answerPlayer = player;
+}
+
 export const GameReducer = createSlice({
 	name: "game",
-	initialState: {
-        players: [],
-		progress: { rounds: [] },
-		currentRound: 0,
-		currentQuestion: null,
-    },
+	initialState,
 	reducers: {
 		setPlayers,
 		setProgress,
 		setSelectedQuestion,
+		setCurrentQuestion,
+		setAnswerPlayer,
 	}
 });

@@ -1,6 +1,5 @@
 import React from "react";
 import { ICategory, IGame } from "../types/IGame";
-import { socket } from "../connection/Client";
 import { Category } from "./Category";
 import { useSelector } from "react-redux";
 import { RootState } from "../types/RootState";
@@ -14,14 +13,6 @@ export const Categories = () =>
         (state: RootState): number => state.gameReducer.currentRound,
         (progress, currentRound): ICategory[] | null => progress.rounds[currentRound]
     ));
-    
-    React.useEffect(() =>
-    {
-        socket.on("question", (data: { roundId: number, category: string, questionId: number }) =>
-        {
-            console.log("Move to", data);
-        });
-    }, [ currentRound ]);
 
     if (categories == null)
         return null;

@@ -1,35 +1,25 @@
 import React from "react";
 import { socket } from "../connection/Client";
 import styles from "../styles/QuestionPrice.module.css";
-import { IQuestion } from "../types/IQuestion";
-import { useDispatch, useSelector } from "react-redux";
+import { IQuestion, ISelectedQuestion } from "../types/IQuestion";
+import { useSelector } from "react-redux";
 import { RootState } from "../types/RootState";
-import { GameReducer } from "../store/GameReducer";
 
 export function QuestionPrice(props: { roundId: number, category: string, question: IQuestion })
 {
-    const [ selected, setSelected ] = React.useState(false);
+    const selectedQuestion: ISelectedQuestion | null = useSelector((state: RootState): ISelectedQuestion | null => state.gameReducer.selectedQuestion);
 
-    const selectedQuestion: IQuestion | null = useSelector((state: RootState) => state.gameReducer.currentQuestion);
+    const isSelected: boolean = selectedQuestion != null && selectedQuestion.questionId == props.question.id && selectedQuestion.category == props.category;
 
-    const dispatch = useDispatch();
+    const myName = localStorage.getItem("name");
 
     const selectQuestion = (): void =>
     {
-        if (selectedQuestion != null)
+        if (selectedQuestion != null || myName === "Святой" || myName === "TV")
             return;
 
-        setSelected(true);
-        dispatch(GameReducer.actions.setSelectedQuestion(props.question));
+        socket.emit("selected", props.roundId, props.category, props.question.id);
     };
 
-    React.useEffect(() =>
-    {
-        if (!selected)
-            return;
-
-        setTimeout(() => socket.emit("question", props.roundId, props.category, props.question.id), 2000);
-    }, [ props, selected ]);
-
-    return <div className={`${styles.price} ${selected ? styles.selected : ""}`} onClick={selectQuestion}>{props.question.completed ? "" : props.question.price}</div>;
+    return <div className={`${styles.price} ${isSelected ? styles.selected : ""}`} onClick={selectQuestion}>{props.question.completed ? "" : props.question.price}</div>;
 }

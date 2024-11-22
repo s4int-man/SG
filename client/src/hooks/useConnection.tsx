@@ -5,15 +5,21 @@ import { IPlayer } from "../types/IProgress";
 import { useDispatch } from "react-redux";
 import { GameReducer } from "../store/GameReducer";
 import { IGame } from "../types/IGame";
+import { IQuestion, ISelectedQuestion } from "../types/IQuestion";
 
 export function useConnection()
 {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const onConnect = () => console.log("Status: connected");
+    const onConnect = React.useCallback((): void =>
+    {
+        console.log("Status: connected");
+        navigate("/login");
+    }, [ navigate ]);
+
     const onDisconnect = () => console.log("Status: disconnected");
-    const onHello = React.useCallback(() => navigate("/game"), [ navigate ]);
+    const onHello = React.useCallback(() => navigate("/screens/game"), [ navigate ]);
     const onPlayers = React.useCallback((players: IPlayer[]): void =>
     {
         console.log("players", players);
@@ -28,6 +34,24 @@ export function useConnection()
         dispatch(GameReducer.actions.setProgress(progress));
     }, [ dispatch ]);
 
+    const onSelectedQuestion = React.useCallback((selectedQuestion: ISelectedQuestion) =>
+    {
+        console.log("Selected", selectedQuestion);
+        dispatch(GameReducer.actions.setSelectedQuestion(selectedQuestion));
+    }, [ dispatch ]);
+
+    const onQuestion = React.useCallback((question: IQuestion) =>
+    {
+        console.log("Move to", question);
+        dispatch(GameReducer.actions.setCurrentQuestion(question));
+        navigate("/screens/question");
+    }, [ navigate, dispatch ]);
+
+    const onAnswerPlayer = React.useCallback((answerPlayer: string | null): void =>
+    {
+        dispatch(GameReducer.actions.setAnswerPlayer(answerPlayer));
+    }, [ dispatch ]);
+
     React.useEffect((): void =>
     {
         socket.on("connect", onConnect);
@@ -35,5 +59,8 @@ export function useConnection()
         socket.on("hello", onHello);
         socket.on("players", onPlayers);
         socket.on("progress", onProgress);
-    }, [ onHello, onPlayers, onProgress ]);
+        socket.on("selected", onSelectedQuestion);
+        socket.on("question", onQuestion);
+        socket.on("answerPlayer", onAnswerPlayer);
+    }, [ onConnect, onHello, onPlayers, onProgress, onSelectedQuestion, onQuestion, onAnswerPlayer ]);
 }

@@ -1,0 +1,8 @@
+.header {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    background-color: #000285;
+    color: #dbd58e;
+    font-size: 24px;
+}
