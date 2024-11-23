@@ -1,17 +1,70 @@
 .question {
+    font-size: 48px;
+    text-align: center;
+    padding: 10px;
+    overflow-y: hidden;
+    height: calc(100% - 202px);
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    font-size: 64px;
-    text-align: center;
-    border-left: 1px solid;
-    border-right: 1px solid;
-    height: 100vh;
-    overflow-y: hidden;
 }
-  
-.answer-button {
-    border: 3px solid;
-    max-width: 300px;
+
+.button,
+.close_button,
+.right_button,
+.wrong_button {
+    margin-top: 10px;
+    font-size: 24px;
+    border: 2px solid;
+    padding: 10px 20px;
+}
+
+.close_button {
+    background-color: yellow;
+}
+
+.right_button {
+    background-color: green;
+    margin-right: 30px;
+}
+
+.wrong_button {
+    background-color: red;
+}
+
+.player_answer {
+    font-size: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: yellow;
+    margin-top: 10px;
+}
+
+.answer {
+    margin-top: 10px;
+    font-size: bold;
+    color: #00ff00;
+}
+
+.image {
+    display: block;
+    margin: 10px auto;
+    max-height: 750px;
+}
+
+.admin_buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+@media (orientation: portrait)
+{
+    .image {
+        width: 100%;
+    }
+    .question {
+        font-size: 24px;
+        min-height: unset;
+    }
 }

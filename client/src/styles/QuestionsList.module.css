@@ -1,4 +1,4 @@
-.category {
+.list {
     display: flex;
 }
   
@@ -12,17 +12,4 @@
     font-weight: bold;
     border: 1px solid;
     width: 100%;
-    max-width: 350px;
-    text-align: center;
-}
-
-@media (orientation: portrait) {
-    .category {
-        display: block;
-    }
-
-    .category_name {
-        max-width: unset;
-        font-size: 20px;
-    }
 }

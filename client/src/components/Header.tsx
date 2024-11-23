@@ -11,10 +11,11 @@ export function Header()
         return null;
 
     return <div className={styles.header}>
-        <div className="title">Святая игра</div>
-        <div className="player-info">
-            <div className="name">{myPlayer.name}:</div>
-            <div className="score">{myPlayer.score} очков</div>
-        </div>
+        <div className={styles.title} >Святая игра</div>
+        {myPlayer.name != "Святой" && myPlayer.name != "TV" &&
+            <div className={styles.player_info}>
+                <div className={styles.name}>{myPlayer.name}:</div>
+                <div className={styles.score}>{myPlayer.score} очков</div>
+        </div>}
     </div>;
 }

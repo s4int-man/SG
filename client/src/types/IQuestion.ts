@@ -1,4 +1,4 @@
-export interface IQuestionSimple
+export interface IQuestion
 {
     id: number;
     price: number;
@@ -6,13 +6,8 @@ export interface IQuestionSimple
     answer: string;
     completed?: boolean;
     answerPlayer?: string;
+    image?: string;
+    audio?: string;
 }
-
-export interface IQuestionImage extends IQuestionSimple
-{
-    image: string;
-}
-
-export type IQuestion = IQuestionImage | IQuestionSimple;
 
 export type ISelectedQuestion = { roundId: number, category: string, questionId: number };

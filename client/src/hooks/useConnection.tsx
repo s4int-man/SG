@@ -19,7 +19,8 @@ export function useConnection()
     }, [ navigate ]);
 
     const onDisconnect = () => console.log("Status: disconnected");
-    const onHello = React.useCallback(() => navigate("/screens/game"), [ navigate ]);
+    const onToGame = React.useCallback(() => navigate("/screens/game"), [ navigate ]);
+    const onToQuestion = React.useCallback(() => navigate("/screens/question"), [ navigate ]);
     const onPlayers = React.useCallback((players: IPlayer[]): void =>
     {
         console.log("players", players);
@@ -52,15 +53,37 @@ export function useConnection()
         dispatch(GameReducer.actions.setAnswerPlayer(answerPlayer));
     }, [ dispatch ]);
 
-    React.useEffect((): void =>
+    const onCurrentRound = React.useCallback((currentRound: number): void =>
+    {
+        console.log("currentRound", currentRound);
+        dispatch(GameReducer.actions.setCurrentRound(currentRound));
+    }, [ dispatch ]);
+
+    React.useEffect(() =>
     {
         socket.on("connect", onConnect);
         socket.on("disconnect",onDisconnect);
-        socket.on("hello", onHello);
+        socket.on("to_game", onToGame);
+        socket.on("to_question", onToQuestion);
         socket.on("players", onPlayers);
         socket.on("progress", onProgress);
         socket.on("selected", onSelectedQuestion);
         socket.on("question", onQuestion);
         socket.on("answerPlayer", onAnswerPlayer);
-    }, [ onConnect, onHello, onPlayers, onProgress, onSelectedQuestion, onQuestion, onAnswerPlayer ]);
+        socket.on("currentRound", onCurrentRound);
+
+        return () =>
+        {
+            socket.off("connect", onConnect);
+            socket.off("disconnect",onDisconnect);
+            socket.off("to_game", onToGame);
+            socket.off("to_question", onToQuestion);
+            socket.off("players", onPlayers);
+            socket.off("progress", onProgress);
+            socket.off("selected", onSelectedQuestion);
+            socket.off("question", onQuestion);
+            socket.off("answerPlayer", onAnswerPlayer);
+            socket.off("currentRound", onCurrentRound);
+        }
+    }, [ onConnect, onToGame, onToQuestion, onPlayers, onProgress, onSelectedQuestion, onQuestion, onAnswerPlayer, onCurrentRound ]);
 }

@@ -1,8 +1,29 @@
 .header {
     display: flex;
-    justify-content: flex-end;
+    padding: 15px;
+    justify-content: space-between;
+    align-items: center;
     gap: 10px;
     background-color: #000285;
     color: #dbd58e;
     font-size: 24px;
+}
+
+@media (orientation: portrait) {
+    .title {
+      font-size: 20px !important;
+    }
+}
+
+.title {
+    font-size: 48px;
+    font-weight: bold;
+}
+
+.player_info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
 }

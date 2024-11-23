@@ -24,6 +24,7 @@ const initialState: IGameState = {
 
 function setPlayers(state: IGameState, action: PayloadAction<IPlayer[]>): void
 {
+	action.payload.sort((a, b) => a.score - b.score);
 	state.players = action.payload;
 }
 
@@ -40,6 +41,11 @@ function setSelectedQuestion(state: IGameState, action: PayloadAction<ISelectedQ
 function setCurrentQuestion(state: IGameState, action: PayloadAction<IQuestion>): void
 {
 	state.currentQuestion = action.payload;
+}
+
+function setCurrentRound(state: IGameState, action: PayloadAction<number>): void
+{
+	state.currentRound = action.payload;
 }
 
 function setAnswerPlayer(state: IGameState, action: PayloadAction<string | null>): void
@@ -63,5 +69,6 @@ export const GameReducer = createSlice({
 		setSelectedQuestion,
 		setCurrentQuestion,
 		setAnswerPlayer,
+		setCurrentRound,
 	}
 });

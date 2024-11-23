@@ -6,6 +6,7 @@ import { Game } from './components/Game';
 import { Question } from './components/Question';
 import { Layout } from './components/Layout';
 import { Loading } from './components/Loading';
+import styles from "./styles/Root.module.css";
 
 export default function App()
 {
@@ -13,7 +14,7 @@ export default function App()
 
 	socket.connect();
 
-    return <div className='root'>
+    return <div className={styles.root}>
 		<Routes>
 			<Route path="/" element={<Loading />} />
 			<Route path="/login" element={<LoginRoute />} />
