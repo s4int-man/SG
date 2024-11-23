@@ -23,7 +23,7 @@
 //     results:  IRoundResult[];
 // }
 
-import { readFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 
 const progressFile = "progress.json";
 const playersFile = "players.json";
@@ -37,5 +37,21 @@ export function loadProgress()
 export function loadPlayers()
 {
     console.log("load players from", playersFile);
-    return JSON.parse(readFileSync(playersFile, 'utf8'));
+    let players = JSON.parse(readFileSync(playersFile, 'utf8'));
+
+    players.forEach(player => player.online = false);
+    players = players.filter(p => p.score != 0);
+    return players;
+}
+
+export function saveProgress(progress)
+{
+    var json = JSON.stringify(progress);
+    writeFileSync(progressFile, json, 'utf8');
+}
+
+export function savePlayers(players)
+{
+    var json = JSON.stringify(players);
+    writeFileSync(playersFile, json, 'utf8');
 }

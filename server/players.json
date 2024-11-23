@@ -1,4 +1,1 @@
-[
-	{ "name": "Святой", "score": 50 },
-	{ "name": "Леночка", "score": 1000 }
-]
+[{"name":"Игрок","score":5100,"online":false},{"name":"Леночек","score":4700,"online":true},{"name":"TV","score":0,"online":true},{"name":"Святой","score":0,"online":true}]
