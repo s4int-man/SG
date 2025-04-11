@@ -2,223 +2,223 @@
    "rounds": [
 	   [
 		   {
-				"name": "Музыка",
+				"name": "Шлакоблокунь",
 				"questions":[
-					{ "id":1, "price":100, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами", "image": "/images/осень.jpg", "audio": "/audio/ddt.mp3" },
-					{ "id":2, "price":200, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":3, "price":300, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":4, "price":400, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":5, "price":500, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":6, "price":600, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":7, "price":700, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" }
+					{ "id":1, "price":300, "text":"Что изображено на картинке?", "answer":"Саламалекула", "image": "/images/birthday/malekula.jpg", "answerImage": "/images/birthday/malekula-a.jpg" },
+					{ "id":2, "price":300, "text":"Что изображено на картинке?", "answer":"Бухлось", "image": "/images/birthday/buhlo.jpg", "answerImage": "/images/birthday/buhlo-a.jpg" },
+					{ "id":3, "price":300, "text":"Что изображено на картинке?", "answer":"Тампони", "image": "/images/birthday/poni.jpg", "answerImage": "/images/birthday/poni-a.jpg" },
+					{ "id":4, "price":300, "text":"Что изображено на картинке?", "answer":"Боброяль", "image": "/images/birthday/bobr.jpg", "answerImage": "/images/birthday/bobr-a.jpg" },
+					{ "id":5, "price":300, "text":"Что изображено на картинке?", "answer":"Лагмантин", "image": "/images/birthday/lagman.jpg", "answerImage": "/images/birthday/lagman-a.jpg" },
+					{ "id":6, "price":300, "text":"Что изображено на картинке?", "answer":"Бананас", "image": "/images/birthday/banan.jpg", "answerImage": "/images/birthday/banan-a.jpg" },
+					{ "id":7, "price":300, "text":"Что изображено на картинке?", "answer":"Манголубь", "image": "/images/birthday/golub.jpg", "answerImage": "/images/birthday/golub-a.jpg" }
 				]
 			},
 			{
-				"name": "Спорт",
+				"name": "Музыкальный цвет",
 				"questions":[
-					{ "id":1, "price":100, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":2, "price":200, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":3, "price":300, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":4, "price":400, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":5, "price":500, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":6, "price":600, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":7, "price":700, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" }
+					{ "id":1, "price":100, "text":"Название группы", "audio": "/audio/birthday/bep.mp3", "answer":"Black Eyed Peas — Pump It" },
+					{ "id":2, "price":200, "text":"Название группы", "audio": "/audio/birthday/green.mp3", "answer":"Green Day — American Idiot" },
+					{ "id":3, "price":300, "text":"Название исполнителя", "audio": "/audio/birthday/black.mp3", "answer":"Моргенштерн - Черный русский" },
+					{ "id":4, "price":400, "text":"Название группы", "audio": "/audio/birthday/red.mp3", "answer":"Красная плесень - За рулем пизда" },
+					{ "id":5, "price":500, "text":"Название исполнителя", "audio": "/audio/birthday/blue.mp3", "answer":"Самоцветы - Синий иней" },
+					{ "id":6, "price":600, "text":"Название исполнителя", "audio": "/audio/birthday/pink.mp3", "answer":"P!nk — So What" },
+					{ "id":7, "price":400, "text":"Название исполнителя", "audio": "/audio/birthday/yellow.mp3", "answer":"Yellow Claw — DJ Turn It Up" }
 				]
 			},
 			{
-				"name": "Кино",
+				"name": "Достопримечательности",
 				"questions":[
-					{ "id":1, "price":100, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":2, "price":200, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":3, "price":300, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":4, "price":400, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":5, "price":500, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":6, "price":600, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":7, "price":700, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" }
+					{ "id":1, "price":100, "text":"Что это за достопримечательность?", "image": "/images/birthday/braden.jpg", "answer":"Браденбургские ворота" },
+					{ "id":2, "price":200, "text":"Что это за достопримечательность?", "image": "/images/birthday/lastochki.jpg", "answer":"Ласточкино гнездо" },
+					{ "id":3, "price":300, "text":"Что это за достопримечательность?", "image": "/images/birthday/luvr.jpg", "answer":"Лувр" },
+					{ "id":4, "price":400, "text":"Что это за достопримечательность?", "image": "/images/birthday/milan.jpg", "answer":"Миланский собор" },
+					{ "id":5, "price":500, "text":"Что это за достопримечательность?", "image": "/images/birthday/tower.jpg", "answer":"Тауэрский мост" },
+					{ "id":6, "price":600, "text":"Что это за достопримечательность?", "image": "/images/birthday/tadge.jpg", "answer":"Тадж Махал" },
+					{ "id":7, "price":700, "text":"Что это за достопримечательность?", "image": "/images/birthday/dvor.jpg", "answer":"Дворцовый мост" }
 				]
 			},
 			{
 				"name": "Мемы",
 				"questions":[
-					{ "id":1, "price":100, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":2, "price":200, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":3, "price":300, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":4, "price":400, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":5, "price":500, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":6, "price":600, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":7, "price":700, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" }
+					{ "id":1, "price":100, "text":"Что говорит Поляк?", "image": "/images/birthday/kurwa.jpg", "answer":"Бобр курва", "answerVideo": "/video/bober.mp4" },
+					{ "id":2, "price":200, "text":"Кем представляется этот кот?", "image": "/images/birthday/bu.jpg", "answer":"Я друг", "answerVideo": "/video/bu.mp4" },
+					{ "id":3, "price":300, "text":"Кто сопровождал мокренькую кисоньку?", "answerImage": "/images/birthday/kisonka.jpg", "answer":"Ослик, суслик, паукан" },
+					{ "id":4, "price":400, "text":"Эта панда является одним из самых популярных животных на YouTube. Миллионы просмотров, пародий и долларов. А все из-за чего?", "image": "/images/birthday/panda.jpg", "answer":"Она чихнула", "answerVideo": "/video/panda.mp4" },
+					{ "id":5, "price":500, "text":"Мальчика просят рассказать, как умер Пушкин. Какую легендарную фразу он произносит?", "image": "/images/birthday/dobryak.jpg", "answerVideo": "/video/dobryak.mp4", "answer":"Жаль, конечно, этого добряка" },
+					{ "id":6, "price":600, "text":"Мем, изначально созданный на ресурсе «Пикабу», но ставший широко популярным 1 апреля 2015 года. В этот день он появлялся при каждом нажатии «мне нравится» в социальной сети «ВКонтакте». Как его зовут?", "image": "/images/birthday/nichosi.jpg", "answer":"Ничоси" },
+					{ "id":7, "price":700, "text":"Какую фразу произносит Гендальф?", "image": "/images/birthday/frodo.jpg", "answerVideo": "/video/frodo.mp4", "answer":"Будь осторожен Фродо. У блять!" }
 				]
 			},
 			{
-				"name": "Программирование",
+				"name": "Эрудиция",
 				"questions":[
-					{ "id":1, "price":100, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":2, "price":200, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":3, "price":300, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":4, "price":400, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":5, "price":500, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":6, "price":600, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":7, "price":700, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" }
+					{ "id":1, "price":100, "text":"Сколько байт в килобайте?", "answer":"1024" },
+					{ "id":2, "price":200, "text":"Какой город - конечный пункт маршрута фирменного поезда 'Россия', отправляющегося из Москвы?", "answer":"Владивосток" },
+					{ "id":3, "price":300, "text":"Назовите имя автора 'Руслана и Людмилы'", "answer":"Александр" },
+					{ "id":4, "price":400, "text":"На какой улице проживал Шерлок Холмс", "answer":"Бейкер-стрит" },
+					{ "id":5, "price":500, "text":"В каком городе мира раньше всего появилось метро?", "answer":"Лондон" },
+					{ "id":6, "price":600, "text":"Кто зажигает рождественскую ель на лужайке Белого дома в Вашингтоне?", "answer":"Президент" },
+					{ "id":7, "price":700, "text":"Какая хищная рыба стала героиней русской народной сказки?", "answer":"Щука" }
 				]
 			},
 			{
 				"name": "История",
 				"questions":[
-					{ "id":1, "price":100, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":2, "price":200, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":3, "price":300, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":4, "price":400, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":5, "price":500, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":6, "price":600, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":7, "price":700, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" }
+					{ "id":1, "price":100, "text":"Какой тыловой город во время Великой Отечественной войны был более известен под именем «Танкоград»?", "answer":"Челябинск" },
+					{ "id":2, "price":200, "text":"В каком году распался СССР?", "answer":"1991" },
+					{ "id":3, "price":300, "text":"В каком году был совершен полет Гагарина в космос?", "answer":"1961" },
+					{ "id":4, "price":400, "text":"В каком году вышел первый iPhone?", "answer":"2007" },
+					{ "id":5, "price":500, "text":"Кто убил Клеопатру?", "answer":"Клеопатра. Прославилась благодаря драматической истории любви к римскому полководцу Марку Антонию. В последние годы её правления Египет был покорён Римом, сама Клеопатра покончила жизнь самоубийством, чтобы не стать пленницей Октавиана." },
+					{ "id":6, "price":600, "text":"Какие имя и фамилия зашифрованы в названии советского танка «ИС»?", "answer":"Иосиф Сталин" },
+					{ "id":7, "price":700, "text":"В какой номинации премьер-министр Великобритании Уинстон Черчилль получил Нобелевскую премию?", "answer":"По литературе" }
+				]
+			}
+		],
+		[
+			{
+				"name": "Спорт",
+				"questions":[
+					{ "id":1, "price":100, "text":"Что такое фол в футболе?", "answer":"Нарушение правил" },
+					{ "id":2, "price":200, "text":"Сколько ВСЕГО фигур на поле в шахматах?", "answer":"32", "answerImage": "/images/birthday/shah.jpg" },
+					{ "id":3, "price":300, "text":"Горнолыжное многоборье, в состав которого входят лыжный балет, могул и воздушная акробатика", "answer":"Фристайл", "answerImage": "/images/birthday/freestyle.jpg" },
+					{ "id":4, "price":400, "text":"Какие пять цветов колец Олимпийских игр?", "answer":"Синий, Красный, Желтый, Зеленый и Черный", "answerImage": "/images/birthday/olimp.jpg" },
+					{ "id":5, "price":500, "text":"Как называется подача в теннисе, при которой отбивающий не касается мяча?", "image": "/images/birthday/tennis.jpg", "answer":"Эйс" },
+					{ "id":6, "price":600, "text":"Как называется тайм в бейсболе?", "image": "/images/birthday/baseball.jpg", "answer":"Иннинг" },
+					{ "id":7, "price":700, "text":"На картинке – четыре последовательных действия, которые учится выполнять начинающий спортсмен. Назовите спорт", "image": "/images/birthday/parus.jpg", "answer":"Парусный спорт" }
+				]
+			},
+			{
+				"name": "Спросим у ИИ",
+				"questions":[
+					{ "id":1, "price":100, "text":"Простой уборщик влюбляется в красавицу в белом и отправляется за ней на край света", "answer":"Валл-и", "answerImage": "/images/birthday/walli.jpg" },
+					{ "id":2, "price":200, "text":"История о том, как кусок льда помог знатной девице избежать неприятного замужества", "answer":"Титаник", "answerImage": "/images/birthday/titanik.jpg" },
+					{ "id":3, "price":300, "text":"Два бандита коротают время за философскими беседами, лечат наркоманку и заметают следы", "answer":"Криминальное чтиво", "answerImage": "/images/birthday/kriminal.jpg" },
+					{ "id":4, "price":400, "text":"Инвалид пытается втереться в доверие к жителям деревни, чтобы получить вид на жительство", "answer":"Аватар", "answerImage": "/images/birthday/avatar.jpg"  },
+					{ "id":5, "price":500, "text":"Врач ставит бесчеловечные опыты над собакой, заставляя ее есть ножом и вилкой, говорить по-человечески и запрещая гонять кошек", "answer":"Собачье сердце", "answerImage": "/images/birthday/sobak.jpg" },
+					{ "id":6, "price":600, "text":"Талантливый математик, не жалея времени, помогает государству в поисках заговорщиков, но оказывается, что все напрасно", "answer":"Игры разума", "answerImage": "/images/birthday/igri.jpg" },
+					{ "id":7, "price":700, "text":"Комедия о пришельцах, в которой замечательно показан процесс прохождения группового ассесмента и отбор лучшего кандидата, который будет защищать землян. И ещё на этой работе очень крутой дресс-код, по которому и был назван фильм.", "answer":"Люди в черном", "answerImage": "/images/birthday/ludi.jpg" }
+				]
+			},
+			{
+				"name": "Вопросы для мальчиков",
+				"questions":[
+					{ "id":1, "price":100, "text":"Откуда эта карта?", "image": "/images/birthday/witcher.jpg", "answer":"Книга Ведьмак" },
+					{ "id":2, "price":200, "text":"Кто такой Марадона?", "answer":"Футболист", "answerImage": "/images/birthday/maradona.jpg" },
+					{ "id":3, "price":300, "text":"В честь какого насекомого назвали гранатомет?", "answerImage": "/images/birthday/muha.jpg", "answer":"Муха" },
+					{ "id":4, "price":400, "text":"Чей это погон?", "image": "/images/birthday/general.jpg", "answer":"Генерал-Майор" },
+					{ "id":5, "price":500, "text":"Сколько стоит АК-47 в CS 1.6?", "image": "/images/birthday/cs.jpg", "answer":"2500$", "answerImage": "/images/birthday/cs-a.jpg" },
+					{ "id":6, "price":600, "text":"Код в GTA SA на 250к$, броню и здоровье?", "image": "/images/birthday/gta.jpg", "answer":"HESOAM" },
+					{ "id":7, "price":700, "text":"Как зовут финального босса Sekiro: Shadows die twice?", "image": "/images/birthday/sekiro.jpg", "answer":"Иссин. Мастер меча (Иссин Асина)", "answerImage": "/images/birthday/sekiro-a.jpg" }
+				]
+			},
+			{
+				"name": "Вопросы для девочек",
+				"questions":[
+					{ "id":1, "price":100, "text":"Что такое мулине?",  "answer":"Нитки", "answerImage": "/images/birthday/muline.jpg" },
+					{ "id":2, "price":200, "text":"Пуанты - что это?", "answer":"Обувь", "answerImage": "/images/birthday/puant.jpg" },
+					{ "id":3, "price":300, "text":"Что такое Венилюкс?", "answer":"Лак для ногтей", "answerImage": "/images/birthday/vini.jpg" },
+					{ "id":4, "price":400, "text":"Органза - что это?", "answer":"Ткань", "answerImage": "/images/birthday/organza.jpg" },
+					{ "id":5, "price":500, "text":"Супинатор - что это?", "answer":"Штучка на стельке", "answerImage": "/images/birthday/supinator.jpg" },
+					{ "id":6, "price":600, "text":"Боа - что это?", "answer":"Шарф", "answerImage": "/images/birthday/boa.jpg" },
+					{ "id":7, "price":700, "text":"Минодьер - что это?", "answer":"Сумочка", "answerImage": "/images/birthday/minoder.jpg" }
+				]
+			},
+		   {
+				"name": "Песни по куплету",
+				"questions":[
+					{ "id":1, "price":100, "text":"Снова голос твой, он как будто колыбель, Я обниму тебя, чтобы не стало холодней", "answer":"Грибы - Тает лёд", "answerAudio": "/audio/birthday/gribi.mp3" },
+					{ "id":2, "price":200, "text":"И она плачет, плачет, как в песне 'Cry me a river'", "answer":"NILETTO - Любимка", "answerAudio": "/audio/birthday/lyubimka.mp3" },
+					{ "id":3, "price":300, "text":"В глазах снова станешь дежавю. Я любил одну, я любил одну, я иду ко дну", "answer":"CYGO - Panda E", "answerAudio": "/audio/birthday/panda-e.mp3" },
+					{ "id":4, "price":400, "text":"Ты сегодня мне принес не букет из пышных роз, не тюльпаны и не лилии", "answer":"Гелена Великанова - Ландыши", "answerAudio": "/audio/birthday/landishi.mp3" },
+					{ "id":5, "price":500, "text":"Поглядеть отвыкшим глазом на балтийскую волну, и на море буду разом кораблем и водолазом", "answer":"Игорь Скляр - Комарово", "answerAudio": "/audio/birthday/komarovo.mp3" },
+					{ "id":6, "price":600, "text":"Мир не прост, совсем не прост, нельзя в нём скрыться от бурь и от гроз", "answer":"ВИА Самоцветы - Всё, что (в жизни) есть у меня", "answerAudio": "/audio/birthday/v_zhizni.mp3" },
+					{ "id":7, "price":700, "text":"В небе флаги плывут, словно разноцветная стая облаков. Сегодня лучше и добрее, добрее, и добрей станет всё человечество", "answer":"Олимпиада-80", "answerAudio": "/audio/birthday/olimpiada.mp3" }
+				]
+			},
+			{
+				"name": "2007",
+				"questions":[
+					{ "id":1, "price":100, "text":"Название исполнителей", "audio": "/audio/birthday/rihanna.mp3", "answer":"Rihanna, Jay-Z – Umbrella" },
+					{ "id":2, "price":200, "text":"Назовите DJ", "audio": "/audio/birthday/guetta.mp3", "answer":"David Guetta – Love Is Gone" },
+					{ "id":3, "price":300, "text":"Название группы", "audio": "/audio/birthday/tokio.mp3", "answer":"Tokio Hotel — Monsoon" },
+					{ "id":4, "price":400, "text":"Название группы", "audio": "/audio/birthday/billy.mp3", "answer":"Billy Talent — Fallen Leaves" },
+					{ "id":5, "price":500, "text":"Название исполнителя", "audio": "/audio/birthday/madonna.mp3", "answer":"Madonna - Jump" },
+					{ "id":6, "price":600, "text":"Название исполнителя", "audio": "/audio/birthday/justin.mp3", "answer":"Justin Timberlake - LoveStoned / I Think She Knows" },
+					{ "id":7, "price":700, "text":"Название исполнителя", "audio": "/audio/birthday/nelly.mp3", "answer":"Nelly Furtado - Say It Right" }
 				]
 			}
 		],
 		[
 		   {
-				"name": "Музыка",
+				"name": "Победители",
 				"questions":[
-					{ "id":1, "price":100, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":2, "price":200, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":3, "price":300, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":4, "price":400, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":5, "price":500, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":6, "price":600, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":7, "price":700, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" }
+					{ "id":1, "price":100, "text":"Назовите исполнителя песни", "audio": "/audio/birthday/malinin.mp3", "answer":"Никита Малинин (победитель «Фабрики Звёзд-3»)" },
+					{ "id":2, "price":200, "text":"Назовите исполнителя песни", "audio": "/audio/birthday/gagarina.mp3", "answer":"Полина Гагарина (победитель «Фабрики Звёзд-2»)" },
+					{ "id":3, "price":300, "text":"Назовите исполнителя песни", "audio": "/audio/birthday/kelly.mp3", "answer":"Kelly Clarkson (победительница 1 сезона American Idol)" },
+					{ "id":4, "price":400, "text":"Назовите исполнителя песни", "audio": "/audio/birthday/dina.mp3", "answer":"Дина Гарипова (победительница 1 сезона шоу «Голос»)" },
+					{ "id":5, "price":500, "text":"Назовите исполнителя песни", "audio": "/audio/birthday/terry.mp3", "answer":"Terry/Ternovoy (победитель 1 сезона шоу «Песни» на ТНТ)" },
+					{ "id":6, "price":600, "text":"Назовите танцевальную команду, которая выступала под эту песню", "audio": "/audio/birthday/dscrew.mp3", "answer":"DS Crew (Победители среди команд Новые Танцы 2 сезон)", "answerVideo": "/video/dscrew.mp4" },
+					{ "id":7, "price":700, "text":"Назовите исполнителя песни", "audio": "/audio/birthday/dantes.mp3", "answer":"Дантес и Олейник/ДиО.фильмы (победители украинской «Фабрики Звёзд-2»)" }
 				]
 			},
 			{
-				"name": "Спорт",
+				"name": "До нашей эры",
 				"questions":[
-					{ "id":1, "price":100, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":2, "price":200, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":3, "price":300, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":4, "price":400, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":5, "price":500, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":6, "price":600, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":7, "price":700, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" }
+					{ "id":1, "price":100, "text":"Как его зовут?", "image": "/images/birthday/mamont.jpg", "answer":"Мамонт" },
+					{ "id":2, "price":200, "text":"Как его зовут?", "image": "/images/birthday/trex.jpg", "answer":"Тиранозавр" },
+					{ "id":3, "price":300, "text":"Как его зовут?", "image": "/images/birthday/ptero.jpg", "answer":"Птеродактиль" },
+					{ "id":4, "price":400, "text":"Как его зовут?", "image": "/images/birthday/megalodon.jpg", "answer":"Мегалодон" },
+					{ "id":5, "price":500, "text":"Как его зовут?", "image": "/images/birthday/velo.jpg", "answer":"Велоцираптор" },
+					{ "id":6, "price":600, "text":"Как его зовут?", "image": "/images/birthday/trice.jpg", "answer":"Трицератопс" },
+					{ "id":7, "price":700, "text":"Как называется мультфильм?", "image": "/images/birthday/zemlya.jpg", "answer":"Земля до начала времен", "answerImage": "/images/birthday/zemlya-a.jpg" }
 				]
 			},
 			{
-				"name": "Кино",
+				"name": "Бутылочка",
 				"questions":[
-					{ "id":1, "price":100, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":2, "price":200, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":3, "price":300, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":4, "price":400, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":5, "price":500, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":6, "price":600, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":7, "price":700, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" }
+					{ "id":1, "price":100, "text":"Название пива", "image": "/images/birthday/bud.jpg", "answerImage": "/images/birthday/bud-a.jpg", "answer":"Bud" },
+					{ "id":2, "price":200, "text":"Название воды", "image": "/images/birthday/bon.jpg", "answerImage": "/images/birthday/bon-a.jpg", "answer":"BonAqua" },
+					{ "id":3, "price":300, "text":"Название шампуня", "image": "/images/birthday/fructis.jpg", "answerImage": "/images/birthday/fructis-a.jpg", "answer":"Fructis" },
+					{ "id":4, "price":400, "text":"Название рома", "image": "/images/birthday/bacardi.jpg", "answerImage": "/images/birthday/bacardi-a.jpg", "answer":"Bacardi" },
+					{ "id":5, "price":500, "text":"Название средства", "image": "/images/birthday/domestos.jpg", "answerImage": "/images/birthday/domestos-a.jpg", "answer":"Domestos" },
+					{ "id":6, "price":600, "text":"Название средства", "image": "/images/birthday/wd40.jpg", "answerImage": "/images/birthday/wd40-a.jpg", "answer":"WD-40" },
+					{ "id":7, "price":700, "text":"Название средства", "image": "/images/birthday/yait.jpg", "answerImage": "/images/birthday/yait-a.jpg", "answer":"Уайт-спирит" }
 				]
 			},
 			{
-				"name": "Мемы",
+				"name": "Кто это сказал",
 				"questions":[
-					{ "id":1, "price":100, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":2, "price":200, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":3, "price":300, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":4, "price":400, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":5, "price":500, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":6, "price":600, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":7, "price":700, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" }
+					{ "id":1, "price":100, "text":"А Жека 15 выстрелов - 2 попадания", "answer":"Сеня", "answerVideo": "/video/senya.mp4" },
+					{ "id":2, "price":200, "text":"Чето тут вода поспокойнее, может въебем?", "answer":"Никита", "answerVideo": "/video/nikita.mp4" },
+					{ "id":3, "price":300, "text":"-Со второго раза. -А это не обговаривалось", "answer":"Таня и Женя", "answerVideo": "/video/tanya_zhenya.mp4" },
+					{ "id":4, "price":400, "text":"-Говори -Ты не будешь? -Я перебью", "answer":"Сережа и Лиза", "answerVideo": "/video/serj-liza.mp4" },
+					{ "id":5, "price":500, "text":"Сидим хаваем в бизнес-зале. Все короче бесплатно", "answer":"Сеня", "answerVideo": "/video/senya2.mp4" },
+					{ "id":6, "price":600, "text":"Кто это? Не знаешь кто это такой недовольный? Нет? Что за недовольный молодой человек", "answerVideo": "/video/liza.mp4", "answer":"Лиза и Мирон" },
+					{ "id":7, "price":700, "text":"Ну и что ты с этим сделаешь? Ну засунь тогда себе мяч в жопу, если это правда", "answerVideo": "/video/svyat.mp4", "answer":"Святой" }
 				]
 			},
 			{
-				"name": "Программирование",
+				"name": "Красный Мерфи",
 				"questions":[
-					{ "id":1, "price":100, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":2, "price":200, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":3, "price":300, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":4, "price":400, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":5, "price":500, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":6, "price":600, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":7, "price":700, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" }
+					{ "id":1, "price":100, "text":"Поставь слово в отрицательной форме: I ___ breakfast at home (have)", "answer":"I don't have breakfast at home" },
+					{ "id":2, "price":200, "text":"Megan is William's wife. William is ___ ____", "answer":"William is Megan's husband" },
+					{ "id":3, "price":300, "text":"Поставь в правильной последовательности слова: from where this is", "answer":"Where is this from?" },
+					{ "id":4, "price":400, "text":"Составь вопросительное предложение: You got up late this morning.", "answer":"Did you get up late this morning?" },
+					{ "id":5, "price":500, "text":"Вставь пропуски: -___ ____ ____ last night? -I was at the cinema", "answer":"Where were you last night?" },
+					{ "id":6, "price":600, "text":"Переведи слово 'Швейцарский'", "answer": "Swiss" },
+					{ "id":7, "price":700, "text":"Переведи: Сколько стоят те футболки?", "answer":"How much those T-shirts" }
 				]
 			},
-			{
-				"name": "История",
+						{
+				"name": "Самые",
 				"questions":[
-					{ "id":1, "price":100, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":2, "price":200, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":3, "price":300, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":4, "price":400, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":5, "price":500, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":6, "price":600, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":7, "price":700, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" }
-				]
-			}
-		],
-		[
-		   {
-				"name": "Музыка",
-				"questions":[
-					{ "id":1, "price":100, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":2, "price":200, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":3, "price":300, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":4, "price":400, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":5, "price":500, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":6, "price":600, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":7, "price":700, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" }
-				]
-			},
-			{
-				"name": "Спорт",
-				"questions":[
-					{ "id":1, "price":100, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":2, "price":200, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":3, "price":300, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":4, "price":400, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":5, "price":500, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":6, "price":600, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":7, "price":700, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" }
-				]
-			},
-			{
-				"name": "Кино",
-				"questions":[
-					{ "id":1, "price":100, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":2, "price":200, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":3, "price":300, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":4, "price":400, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":5, "price":500, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":6, "price":600, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":7, "price":700, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" }
-				]
-			},
-			{
-				"name": "Мемы",
-				"questions":[
-					{ "id":1, "price":100, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":2, "price":200, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":3, "price":300, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":4, "price":400, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":5, "price":500, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":6, "price":600, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":7, "price":700, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" }
-				]
-			},
-			{
-				"name": "Программирование",
-				"questions":[
-					{ "id":1, "price":100, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":2, "price":200, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":3, "price":300, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":4, "price":400, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":5, "price":500, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":6, "price":600, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":7, "price":700, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" }
-				]
-			},
-			{
-				"name": "История",
-				"questions":[
-					{ "id":1, "price":100, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":2, "price":200, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":3, "price":300, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":4, "price":400, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":5, "price":500, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":6, "price":600, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" },
-					{ "id":7, "price":700, "text":"Что такое осень?", "answer":"Это небо. Плучущее небо под ногами" }
+					{ "id":1, "price":100, "text":"Самая длинная река", "answer":"Амазонка", "answerImage": "/images/birthday/amazonka.jpg" },
+					{ "id":2, "price":200, "text":"Самая большая планета", "answer":"Юпитер", "answerImage": "/images/birthday/jupiter.jpg" },
+					{ "id":3, "price":300, "text":"Самая продаваемая книга", "answer":"Библия", "answerImage": "/images/birthday/bibl.jpg" },
+					{ "id":4, "price":400, "text":"Самая редкая группа крови", "answer":"Четвертая", "answerImage": "/images/birthday/krov.jpg" },
+					{ "id":5, "price":500, "text":"Самые шумные существа в океане", "answer":"Креветки", "answerImage": "/images/birthday/krevet.jpg" },
+					{ "id":6, "price":600, "text":"Самое медленное существо", "answer":"Ленивец", "answerImage": "/images/birthday/len.jpg" },
+					{ "id":7, "price":700, "text":"Самый популярный человек", "answer":"Mr. Beast", "answerImage": "/images/birthday/mrbeast.jpg" }
 				]
 			}
 		]

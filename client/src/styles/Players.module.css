@@ -1,6 +1,8 @@
 .players {
     display: flex;
     flex-wrap: wrap;
+    box-sizing: border-box;
+    height: 110px;
 }
   
 .title {

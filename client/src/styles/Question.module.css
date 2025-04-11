@@ -3,10 +3,10 @@
     text-align: center;
     padding: 10px;
     overflow-y: hidden;
-    height: calc(100% - 202px);
     display: flex;
     flex-direction: column;
     justify-content: center;
+    flex-grow: 1;
 }
 
 .button,
@@ -47,9 +47,16 @@
 }
 
 .image {
-    display: block;
-    margin: 10px auto;
-    max-height: 750px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 100%;
+    width: 100%;
+}
+
+.video {
+    align-self: center;
+    height: calc(100% - 250px);
 }
 
 .admin_buttons {

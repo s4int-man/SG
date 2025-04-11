@@ -2,3 +2,11 @@
     background-color: #000285;
     color: #dbd58e;
 }
+
+.select_text {
+    font-size: 24px;
+    color: yellow;
+    font-weight: bold;
+    text-decoration: underline;
+    text-align: center;
+}

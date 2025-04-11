@@ -7,9 +7,15 @@
     background-color: #000285;
     color: #dbd58e;
     font-size: 24px;
+    box-sizing: border-box;
+    height: 94px;
 }
 
 @media (orientation: portrait) {
+    .header {
+        box-sizing: border-box;
+        height: 57px;
+    }
     .title {
       font-size: 20px !important;
     }

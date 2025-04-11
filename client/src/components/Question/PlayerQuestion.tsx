@@ -16,7 +16,7 @@ export function PlayerQuestion(props: IQuestion)
 
     const myName = localStorage.getItem("name") || "";
 
-    const isImageAnswer = props.answer.includes("images");
+    const isImageAnswer = props.answerImage != null;
 
     const onClick = () =>
     {
@@ -40,10 +40,10 @@ export function PlayerQuestion(props: IQuestion)
             <div className="text">
                 {props.text}
             </div>
-            {props.image && !answerOpened && <img className={styles.image} src={serverUrl + props.image} alt="" />}
-            {props.image && answerOpened && !isImageAnswer && <img className={styles.image} src={serverUrl + props.image} alt="" />}
-            {answerOpened && isImageAnswer && <ImageAnswer answer={props.answer} />}
-            {answerOpened && !isImageAnswer && <TextAnswer answer={props.answer} />}
+            {props.image && !answerOpened && <div className={styles.image} style={{ backgroundImage: "url(" + serverUrl + props.image + ")" }} />}
+            {props.image && answerOpened && !isImageAnswer && <div className={styles.image} style={{ backgroundImage: "url(" + serverUrl + props.image + ")" }} />}
+            {answerOpened && isImageAnswer && <ImageAnswer answer={props.answerImage!} />}
+            {answerOpened && <TextAnswer answer={props.answer} />}
             {answerPlayer != null && answerPlayer.name === myName && <div className={styles.player_answer}>Ты отвечаешь!</div>}
             {answerPlayer != null && answerPlayer.name !== myName && <div className={styles.player_answer}>Отвечает: {answerPlayer.name}</div>}
             {answerPlayer == null && !answerOpened && <button className={styles.button} onClick={onClick}>Ответить</button>}

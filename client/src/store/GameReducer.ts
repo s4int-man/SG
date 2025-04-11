@@ -11,6 +11,7 @@ interface IGameState
 	currentQuestion: IQuestion | null;
 	selectedQuestion: ISelectedQuestion | null;
 	answerPlayer: IPlayer | null;
+	leaderPlayer?: string;
 }
 
 const initialState: IGameState = {
@@ -20,6 +21,7 @@ const initialState: IGameState = {
 	selectedQuestion: null,
 	currentQuestion: null,
 	answerPlayer: null,
+	leaderPlayer: undefined,
 };
 
 function setPlayers(state: IGameState, action: PayloadAction<IPlayer[]>): void
@@ -60,6 +62,11 @@ function setAnswerPlayer(state: IGameState, action: PayloadAction<string | null>
 	state.answerPlayer = player;
 }
 
+function setLeaderPlayer(state: IGameState, action: PayloadAction<string | undefined>): void
+{
+	state.leaderPlayer = action.payload;
+}
+
 export const GameReducer = createSlice({
 	name: "game",
 	initialState,
@@ -70,5 +77,6 @@ export const GameReducer = createSlice({
 		setCurrentQuestion,
 		setAnswerPlayer,
 		setCurrentRound,
+		setLeaderPlayer
 	}
 });

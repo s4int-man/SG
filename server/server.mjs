@@ -12,6 +12,7 @@ let answerPlayer = null;
 let currentQuestion = null;
 let currentRound = findCurrentRound();
 let isOpened = false;
+let leaderPlayer = undefined;
 
 console.log("players", players);
 console.log("progress", progress);
@@ -94,13 +95,12 @@ const io = new Server(httpServer, {
 });
 
 io.on("connection", (socket) => {
-    let connectionName = "";
-
     function sendNextRound()
     {
         currentRound++;
         console.log("currentRound", currentRound);
         io.sockets.emit("currentRound", currentRound);
+        io.sockets.emit("leaderPlayer");
     }
 
     function closeQuestion()
@@ -124,13 +124,13 @@ io.on("connection", (socket) => {
     socket.on("login", (name) =>
     {
         console.log(name, "logged in");
-        connectionName = name;
 
         addPlayer(name);
         savePlayers(players);
 
         socket.emit("progress", progress);
         socket.emit("currentRound", currentRound);
+        socket.emit("leaderPlayer", leaderPlayer);
         io.sockets.emit("players", players);
 
         if (currentQuestion == null)
@@ -209,6 +209,9 @@ io.on("connection", (socket) => {
 
         savePlayers(players);
         io.sockets.emit("players", players);
+
+        leaderPlayer = answerPlayer;
+        io.sockets.emit("leaderPlayer", leaderPlayer);
 
         closeQuestion();
     });

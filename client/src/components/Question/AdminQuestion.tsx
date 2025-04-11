@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import { IQuestion } from "../../types/IQuestion";
 import { RootState } from "../../types/RootState";
 import { IPlayer } from "../../types/IProgress";
-import { serverUrl, socket } from "../../connection/Client";
+import { socket } from "../../connection/Client";
 import styles from "../../styles/Question.module.css";
 import React, { useState } from "react";
 import { TextAnswer } from "./TextAnswer";
@@ -14,7 +14,7 @@ export function AdminQuestion(props: IQuestion)
     const [ playClicked, setPlayClicked ] = useState(false);
     const [ answerOpened, setAnswerOpened ] = useState(false);
 
-    const isImageAnswer = props.answer.includes("images");
+    const isImageAnswer = props.answerImage != null;
 
     const openAnswer = () =>
     {
@@ -50,8 +50,8 @@ export function AdminQuestion(props: IQuestion)
                 {props.text}
             </div>
             {answerPlayer != null && <div className={styles.player_answer}>Отвечает: {answerPlayer.name}</div>}
-            {isImageAnswer && <ImageAnswer answer={props.answer} />}
-            {!isImageAnswer && <TextAnswer answer={props.answer} />}
+            {isImageAnswer && <ImageAnswer answer={props.answerImage!} />}
+            <TextAnswer answer={props.answer} />
         </div>
         <div className={styles.admin_buttons}>
             {

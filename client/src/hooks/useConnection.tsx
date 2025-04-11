@@ -59,6 +59,11 @@ export function useConnection()
         dispatch(GameReducer.actions.setCurrentRound(currentRound));
     }, [ dispatch ]);
 
+    const onLeaderPlayer = React.useCallback((playerName: string | undefined) =>
+    {
+        dispatch(GameReducer.actions.setLeaderPlayer(playerName));
+    }, [ dispatch ]);
+
     React.useEffect(() =>
     {
         socket.on("connect", onConnect);
@@ -71,6 +76,7 @@ export function useConnection()
         socket.on("question", onQuestion);
         socket.on("answerPlayer", onAnswerPlayer);
         socket.on("currentRound", onCurrentRound);
+        socket.on("leaderPlayer", onLeaderPlayer);
 
         return () =>
         {
@@ -84,6 +90,7 @@ export function useConnection()
             socket.off("question", onQuestion);
             socket.off("answerPlayer", onAnswerPlayer);
             socket.off("currentRound", onCurrentRound);
+            socket.off("leaderPlayer", onLeaderPlayer);
         }
-    }, [ onConnect, onToGame, onToQuestion, onPlayers, onProgress, onSelectedQuestion, onQuestion, onAnswerPlayer, onCurrentRound ]);
+    }, [ onConnect, onToGame, onToQuestion, onPlayers, onProgress, onSelectedQuestion, onQuestion, onAnswerPlayer, onCurrentRound, onLeaderPlayer ]);
 }

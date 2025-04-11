@@ -3,3 +3,9 @@ body,
     background-color: #000285;
     color: #dbd58e;
 }
+
+.layout {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
