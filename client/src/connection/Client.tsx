@@ -1,4 +1,4 @@
 import { io } from "socket.io-client";
+import config from "../config.json";
 
-export const serverUrl = "http://192.168.0.14:4000";
-export const socket = io(serverUrl);
+export const socket = io(config.server);

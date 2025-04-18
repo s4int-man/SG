@@ -52,7 +52,7 @@
 			{
 				"name": "Кто исполняет?",
 				"questions":[
-					{ "id":1, "price":100, "text":"Кто исполняет песню", "answer":"Кино", "audio": "/audio/kino.mp3", "answerAudio": "/audio/ddt.mp3" },
+					{ "id":1, "price":100, "text":"Кто исполняет песню", "answer":"Кино", "audio": "/audio/kino.mp3", "answerVideo": "/video/bober.mp4" },
 					{ "id":2, "price":200, "text":"Кто исполняет песню?", "answer":"ДДТ", "audio": "/audio/ddt.mp3", "answerAudio": "/audio/ddt.mp3" },
 					{ "id":3, "price":300, "text":"Кто исполняет песню?", "answer":"Guf и Баста", "audio": "/audio/basta.mp3", "answerAudio": "/audio/ddt.mp3" },
 					{ "id":4, "price":400, "text":"Кто исполняет песню?", "answer":"Бьянка", "audio": "/audio/byanka.mp3", "answerAudio": "/audio/ddt.mp3" },

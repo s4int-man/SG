@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../types/RootState";
 import styles from "../styles/Header.module.css";
+import config from "../config.json";
 
 export function Header()
 {
@@ -12,7 +13,7 @@ export function Header()
 
     return <div className={styles.header}>
         <div className={styles.title} >Святая игра</div>
-        {myPlayer.name != "Святой" && myPlayer.name != "TV" &&
+        {myPlayer.name != config.emcee && myPlayer.name != "TV" &&
             <div className={styles.player_info}>
                 <div className={styles.name}>{myPlayer.name}:</div>
                 <div className={styles.score}>{myPlayer.score} очков</div>

@@ -1,10 +1,10 @@
 import React from "react";
-import { serverUrl } from "../../connection/Client";
+import config from "../../config.json";
 import { useAudio } from "../../hooks/useAudio";
 
 export function AudioAnswer(props: { answer: string })
 {
-    const audio: HTMLAudioElement | null = useAudio(serverUrl + props.answer);
+    const audio: HTMLAudioElement | null = useAudio(config.server + props.answer);
 
     const play = React.useCallback(() => audio?.play(), [ audio ]);
     const stop = React.useCallback(() => audio?.pause(), [ audio ]);

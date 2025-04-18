@@ -2,11 +2,12 @@ import { useSelector } from "react-redux";
 import { IPlayer } from "../../types/IProgress";
 import { IQuestion } from "../../types/IQuestion";
 import { RootState } from "../../types/RootState";
-import { serverUrl, socket } from "../../connection/Client";
+import { socket } from "../../connection/Client";
 import styles from "../../styles/Question.module.css";
 import React, { useState } from "react";
 import { TextAnswer } from "./TextAnswer";
 import { ImageAnswer } from "./ImageAnswer";
+import config from "../../config.json";
 
 export function PlayerQuestion(props: IQuestion)
 {
@@ -40,8 +41,8 @@ export function PlayerQuestion(props: IQuestion)
             <div className="text">
                 {props.text}
             </div>
-            {props.image && !answerOpened && <div className={styles.image} style={{ backgroundImage: "url(" + serverUrl + props.image + ")" }} />}
-            {props.image && answerOpened && !isImageAnswer && <div className={styles.image} style={{ backgroundImage: "url(" + serverUrl + props.image + ")" }} />}
+            {props.image && !answerOpened && <div className={styles.image} style={{ backgroundImage: "url(" + config.server + props.image + ")" }} />}
+            {props.image && answerOpened && !isImageAnswer && <div className={styles.image} style={{ backgroundImage: "url(" + config.server + props.image + ")" }} />}
             {answerOpened && isImageAnswer && <ImageAnswer answer={props.answerImage!} />}
             {answerOpened && <TextAnswer answer={props.answer} />}
             {answerPlayer != null && answerPlayer.name === myName && <div className={styles.player_answer}>Ты отвечаешь!</div>}

@@ -11,6 +11,7 @@ export interface IQuestion
     answerPlayer?: string;
     image?: string;
     audio?: string;
+    catInBag?: boolean;
 }
 
 export type ISelectedQuestion = { roundId: number, category: string, questionId: number };

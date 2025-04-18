@@ -10,6 +10,8 @@ export const useAudio = (src?: string) =>
         if (src == null)
             return;
 
+        console.log(src);
+
         const _audio = new Audio(src);
         _audio.load();
         _audio.addEventListener('canplaythrough', () => {

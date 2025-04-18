@@ -5,16 +5,18 @@ import { RootState } from "../../types/RootState";
 import styles from "../../styles/Question.module.css";
 import React from "react";
 import { useAudio } from "../../hooks/useAudio";
-import { serverUrl, socket } from "../../connection/Client";
+import { socket } from "../../connection/Client";
 import { ImageAnswer } from "./ImageAnswer";
 import { TextAnswer } from "./TextAnswer";
 import { VideoAnswer } from "./VideoAnswer";
 import { AudioAnswer } from "./AudioAnswer";
+import config from "../../config.json";
+import { CatInBag } from "./CatInBag";
 
 export function TvQuestion(props: IQuestion)
 {
     const answerPlayer: IPlayer | null = useSelector((state: RootState): IPlayer | null => state.gameReducer.answerPlayer);
-    const audio: HTMLAudioElement | null = useAudio(serverUrl + props.audio);
+    const audio: HTMLAudioElement | null = useAudio(config.server + props.audio);
 
     const [ answerOpened, setAnswerOpened ] = React.useState(false);
 
@@ -22,17 +24,23 @@ export function TvQuestion(props: IQuestion)
     const isVideoAnswer = props.answerVideo != null;
     const isAudioAnswer = props.answerAudio != null;
 
+    console.log("video answer", isVideoAnswer);
+
     const play = React.useCallback(() => audio?.play(), [ audio ]);
     const stop = React.useCallback(() => audio?.pause(), [ audio ]);
 
-    const openAnswer = React.useCallback(() => {
+    const openAnswer = React.useCallback(() =>
+    {
         setAnswerOpened(true);
 
         stop();
 
-        if (!isAudioAnswer)
+        if (isAudioAnswer || isVideoAnswer)
+            stop();
+
+        if (!isAudioAnswer && !isVideoAnswer)
             audio?.play();
-    }, [ isAudioAnswer, audio, stop ]);
+    }, [ isAudioAnswer, audio, isVideoAnswer, stop ]);
 
     React.useEffect(() =>
     {
@@ -47,6 +55,9 @@ export function TvQuestion(props: IQuestion)
             stop();
         } 
     }, [ play, stop, openAnswer ]);
+
+    if (props.catInBag && answerPlayer == null)
+        return <CatInBag />;
     
     return <React.Fragment>
         <hr />
@@ -54,8 +65,8 @@ export function TvQuestion(props: IQuestion)
             <div className="text">
                 {props.text}
             </div>
-            {props.image && !answerOpened && <div className={styles.image} style={{ backgroundImage: "url(" + serverUrl + props.image + ")" }} />}
-            {props.image && answerOpened && !isImageAnswer && !isVideoAnswer && <div className={styles.image} style={{ backgroundImage: "url(" + serverUrl + props.image + ")" }} />}
+            {props.image && !answerOpened && <div className={styles.image} style={{ backgroundImage: "url(" + config.server + props.image + ")" }} />}
+            {props.image && answerOpened && !isImageAnswer && !isVideoAnswer && <div className={styles.image} style={{ backgroundImage: "url(" + config.server + props.image + ")" }} />}
             {answerOpened && isImageAnswer && <ImageAnswer answer={props.answerImage!} />}
             {answerOpened && isVideoAnswer && <VideoAnswer answer={props.answerVideo!} />}
             {answerOpened && isAudioAnswer && !isVideoAnswer && <AudioAnswer answer={props.answerAudio!} />}

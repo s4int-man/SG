@@ -4,6 +4,7 @@ import { IQuestion } from "../types/IQuestion";
 import { AdminQuestion } from "./Question/AdminQuestion";
 import { TvQuestion } from "./Question/TvQuestion";
 import { PlayerQuestion } from "./Question/PlayerQuestion";
+import config from "../config.json";
 
 export function Question()
 {
@@ -14,10 +15,10 @@ export function Question()
     if (currentQuestion == null)
         return null;
 
-    if (name === "Святой")
+    if (name === config.emcee)
         return <AdminQuestion {...currentQuestion} />;
 
-    if (name === "TV")
+    if (name === config.tv)
         return <TvQuestion {...currentQuestion} />;
 
     return <PlayerQuestion {...currentQuestion} />;
