@@ -1,21 +1,22 @@
+import React from "react";
 import { useSelector } from "react-redux";
+import config from "../../config.json";
+import { socket } from "../../connection/Client";
+import { useAudio } from "../../hooks/useAudio";
+import styles from "../../styles/Question.module.css";
 import { IPlayer } from "../../types/IProgress";
 import { IQuestion } from "../../types/IQuestion";
 import { RootState } from "../../types/RootState";
-import styles from "../../styles/Question.module.css";
-import React from "react";
-import { useAudio } from "../../hooks/useAudio";
-import { socket } from "../../connection/Client";
+import { AudioAnswer } from "./AudioAnswer";
+import { CatInBag } from "./CatInBag";
 import { ImageAnswer } from "./ImageAnswer";
 import { TextAnswer } from "./TextAnswer";
 import { VideoAnswer } from "./VideoAnswer";
-import { AudioAnswer } from "./AudioAnswer";
-import config from "../../config.json";
-import { CatInBag } from "./CatInBag";
 
 export function TvQuestion(props: IQuestion)
 {
     const answerPlayer: IPlayer | null = useSelector((state: RootState): IPlayer | null => state.gameReducer.answerPlayer);
+    const catInBagSelected = useSelector((state: RootState) => state.gameReducer.catInBagSelected);
     const audio: HTMLAudioElement | null = useAudio(config.server + props.audio);
 
     const [ answerOpened, setAnswerOpened ] = React.useState(false);
@@ -56,7 +57,7 @@ export function TvQuestion(props: IQuestion)
         } 
     }, [ play, stop, openAnswer ]);
 
-    if (props.catInBag && answerPlayer == null)
+    if (props.catInBag && !catInBagSelected && !answerOpened)
         return <CatInBag />;
     
     return <React.Fragment>

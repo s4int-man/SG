@@ -1,19 +1,24 @@
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
+import config from "../../config.json";
+import { socket } from "../../connection/Client";
+import styles from "../../styles/Question.module.css";
 import { IPlayer } from "../../types/IProgress";
 import { IQuestion } from "../../types/IQuestion";
 import { RootState } from "../../types/RootState";
-import { socket } from "../../connection/Client";
-import styles from "../../styles/Question.module.css";
-import React, { useState } from "react";
-import { TextAnswer } from "./TextAnswer";
+import { CatInBag } from "./CatInBag";
+import { CatInBagPlayer } from "./CatInBagPlayer";
+import { CatInBagPlayerAnswered } from "./CatInBagPlayerAnswered";
 import { ImageAnswer } from "./ImageAnswer";
-import config from "../../config.json";
+import { TextAnswer } from "./TextAnswer";
 
 export function PlayerQuestion(props: IQuestion)
 {
     const [ answerOpened, setAnswerOpened ] = useState(false);
-    
+
+    const leaderPlayer = useSelector((state: RootState) => state.gameReducer.leaderPlayer);
     const answerPlayer: IPlayer | null = useSelector((state: RootState): IPlayer | null => state.gameReducer.answerPlayer);
+    const catInBagSelected = useSelector((state: RootState) => state.gameReducer.catInBagSelected);
 
     const myName = localStorage.getItem("name") || "";
 
@@ -24,7 +29,8 @@ export function PlayerQuestion(props: IQuestion)
         socket.emit("answerPlayer", localStorage.getItem("name") || "");
     }
 
-    const openAnswer = () => {
+    const openAnswer = () =>
+    {
         setAnswerOpened(true);
     }
 
@@ -33,7 +39,21 @@ export function PlayerQuestion(props: IQuestion)
         socket.on("openAnswer", openAnswer);
 
         return () => void socket.off("openAnswer", openAnswer);
-    })
+    });
+
+    if (props.catInBag && !catInBagSelected && !answerOpened)
+    {
+        if (leaderPlayer == myName)
+            return <CatInBagPlayer />;
+        else
+            return <CatInBag />;
+    }
+
+    if (props.catInBag && leaderPlayer !== myName && !answerOpened)
+        return <CatInBagPlayerAnswered />;
+
+    if (props.catInBag && !answerOpened)
+        onClick();
 
     return <React.Fragment>
         <hr />

@@ -1,5 +1,4 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 
 export const useAudio = (src?: string) =>
 {
@@ -9,8 +8,6 @@ export const useAudio = (src?: string) =>
     {
         if (src == null)
             return;
-
-        console.log(src);
 
         const _audio = new Audio(src);
         _audio.load();

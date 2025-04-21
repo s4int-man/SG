@@ -1,10 +1,10 @@
+import React from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { socket } from "../connection/Client";
-import React from "react";
-import { IPlayer } from "../types/IProgress";
-import { useDispatch } from "react-redux";
 import { GameReducer } from "../store/GameReducer";
 import { IGame } from "../types/IGame";
+import { IPlayer } from "../types/IProgress";
 import { IQuestion, ISelectedQuestion } from "../types/IQuestion";
 
 export function useConnection()
@@ -64,6 +64,11 @@ export function useConnection()
         dispatch(GameReducer.actions.setLeaderPlayer(playerName));
     }, [ dispatch ]);
 
+    const onCatInBagSelected = React.useCallback((catInBagSelected: boolean) =>
+    {
+        dispatch(GameReducer.actions.setCatInBagSelected(catInBagSelected));
+    }, [ dispatch ]);
+
     React.useEffect(() =>
     {
         socket.on("connect", onConnect);
@@ -77,6 +82,7 @@ export function useConnection()
         socket.on("answerPlayer", onAnswerPlayer);
         socket.on("currentRound", onCurrentRound);
         socket.on("leaderPlayer", onLeaderPlayer);
+        socket.on("catInBagSelected", onCatInBagSelected);
 
         return () =>
         {
@@ -91,6 +97,7 @@ export function useConnection()
             socket.off("answerPlayer", onAnswerPlayer);
             socket.off("currentRound", onCurrentRound);
             socket.off("leaderPlayer", onLeaderPlayer);
+            socket.off("catInBagSelected", onCatInBagSelected);
         }
-    }, [ onConnect, onToGame, onToQuestion, onPlayers, onProgress, onSelectedQuestion, onQuestion, onAnswerPlayer, onCurrentRound, onLeaderPlayer ]);
+    }, [ onConnect, onToGame, onToQuestion, onPlayers, onProgress, onSelectedQuestion, onQuestion, onAnswerPlayer, onCurrentRound, onLeaderPlayer, onCatInBagSelected ]);
 }

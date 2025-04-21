@@ -1,11 +1,10 @@
-import React from "react";
+import { useSelector } from "react-redux";
+import config from "../config.json";
 import { socket } from "../connection/Client";
+import { useScreenOrientation } from "../hooks/useScreenOrientation";
 import styles from "../styles/QuestionPrice.module.css";
 import { IQuestion, ISelectedQuestion } from "../types/IQuestion";
-import { useSelector } from "react-redux";
 import { RootState } from "../types/RootState";
-import { useScreenOrientation } from "../hooks/useScreenOrientation";
-import config from "../config.json";
 
 export function QuestionPrice(props: { roundId: number, category: string, question: IQuestion })
 {
@@ -22,7 +21,7 @@ export function QuestionPrice(props: { roundId: number, category: string, questi
         if (props.question.completed || selectedQuestion != null || (leaderPlayer != undefined && myName != leaderPlayer && myName != config.emcee))
             return;
 
-        socket.emit("selected", props.roundId, props.category, props.question.id);
+        socket.emit("selected", props.roundId, props.category, props.question.id, myName);
     };
 
     return <div className={`${styles.price} ${isSelected ? styles.selected : ""}`} style={{ cursor: props.question.completed ? "auto" : "pointer" }} onClick={selectQuestion}>

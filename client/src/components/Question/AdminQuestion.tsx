@@ -1,18 +1,20 @@
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { IQuestion } from "../../types/IQuestion";
-import { RootState } from "../../types/RootState";
-import { IPlayer } from "../../types/IProgress";
 import { socket } from "../../connection/Client";
 import styles from "../../styles/Question.module.css";
-import React, { useState } from "react";
-import { TextAnswer } from "./TextAnswer";
+import { IPlayer } from "../../types/IProgress";
+import { IQuestion } from "../../types/IQuestion";
+import { RootState } from "../../types/RootState";
+import { CatInBag } from "./CatInBag";
 import { ImageAnswer } from "./ImageAnswer";
+import { TextAnswer } from "./TextAnswer";
 
 export function AdminQuestion(props: IQuestion)
 {
     const answerPlayer: IPlayer | null = useSelector((state: RootState): IPlayer | null => state.gameReducer.answerPlayer);
     const [ playClicked, setPlayClicked ] = useState(false);
     const [ answerOpened, setAnswerOpened ] = useState(false);
+    const catInBagSelected = useSelector((state: RootState) => state.gameReducer.catInBagSelected);
 
     const isImageAnswer = props.answerImage != null;
 
@@ -43,6 +45,9 @@ export function AdminQuestion(props: IQuestion)
     {
         socket.emit("closeQuestion");
     }
+
+    if (props.catInBag && !catInBagSelected && !answerOpened)
+        return <CatInBag />;
 
     return <React.Fragment>
         <div className={styles.question}>

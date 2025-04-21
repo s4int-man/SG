@@ -1,8 +1,10 @@
 import { useSelector } from "react-redux";
-import { RootState } from "../../types/RootState";
 import { createSelector } from "@reduxjs/toolkit";
-import { IPlayer } from "../../types/IProgress";
 import config from "../../config.json";
+import { socket } from "../../connection/Client";
+import styles from "../../styles/CatInBag.module.css";
+import { IPlayer } from "../../types/IProgress";
+import { RootState } from "../../types/RootState";
 
 const EXCLUDE_PLAYERS = [ config.emcee, config.tv, localStorage.getItem("name") ];
 
@@ -13,8 +15,13 @@ export const CatInBagPlayer = () =>
         (players: IPlayer[]): IPlayer[] => players.filter((player: IPlayer): boolean => !EXCLUDE_PLAYERS.includes(player.name))
     ));
 
-    return <div>
-        Выбери игрока
-        {players.map(player => <div key={player.name}>{ player.name }</div>)}
+    const selectPlayer = (playerName: string) => 
+    {
+        socket.emit("catInBagPlayer", playerName);
+    }
+
+    return <div className={styles.container}>
+        Тебе достался Кот в мешке<br />Выбери игрока, кому передать вопрос
+        {players.map(player => <div key={player.name} onClick={() => selectPlayer(player.name)} className={styles.player}>{ player.name }</div>)}
     </div>;
 }

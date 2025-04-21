@@ -1,6 +1,6 @@
-import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { IPlayer } from "../types/IProgress";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IGame } from "../types/IGame";
+import { IPlayer } from "../types/IProgress";
 import { IQuestion, ISelectedQuestion } from "../types/IQuestion";
 
 interface IGameState
@@ -12,6 +12,7 @@ interface IGameState
 	selectedQuestion: ISelectedQuestion | null;
 	answerPlayer: IPlayer | null;
 	leaderPlayer?: string;
+	catInBagSelected: boolean;
 }
 
 const initialState: IGameState = {
@@ -22,6 +23,7 @@ const initialState: IGameState = {
 	currentQuestion: null,
 	answerPlayer: null,
 	leaderPlayer: undefined,
+	catInBagSelected: false,
 };
 
 function setPlayers(state: IGameState, action: PayloadAction<IPlayer[]>): void
@@ -67,6 +69,11 @@ function setLeaderPlayer(state: IGameState, action: PayloadAction<string | undef
 	state.leaderPlayer = action.payload;
 }
 
+function setCatInBagSelected(state: IGameState, action: PayloadAction<boolean>): void
+{
+	state.catInBagSelected = action.payload;
+}
+
 export const GameReducer = createSlice({
 	name: "game",
 	initialState,
@@ -77,6 +84,7 @@ export const GameReducer = createSlice({
 		setCurrentQuestion,
 		setAnswerPlayer,
 		setCurrentRound,
-		setLeaderPlayer
+		setLeaderPlayer,
+		setCatInBagSelected,
 	}
 });
