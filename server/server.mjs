@@ -13,6 +13,11 @@ let currentQuestion = null;
 let currentRound = findCurrentRound();
 let isOpened = false;
 let leaderPlayer = undefined;
+let catInBagSelected = false;
+
+let roundId = 0;
+let category = "";
+let questionId = 0;
 
 console.log("players", players);
 console.log("progress", progress);
@@ -111,6 +116,8 @@ io.on("connection", (socket) => {
 
         io.sockets.emit("openAnswer");
         io.sockets.emit("progress", progress);
+        catInBagSelected = false;
+        io.sockets.emit("catInBagSelected", catInBagSelected);
 
         answerPlayer = null;
         currentQuestion = null;
@@ -164,11 +171,17 @@ io.on("connection", (socket) => {
         socket.emit("players", players);
     });
 
-    socket.on("selected", (roundId, category, questionId) =>
+    socket.on("selected", (_roundId, _category, _questionId, _leaderPlayer) =>
     {
         isOpened = false;
+        roundId = _roundId;
+        category = _category;
+        questionId = _questionId;
+        leaderPlayer = _leaderPlayer;
+
         console.log("question", roundId, category, questionId);
         io.sockets.emit("selected", { roundId, category, questionId });
+        io.sockets.emit("leaderPlayer", leaderPlayer);
 
         currentQuestion = findQuestion(roundId, category, questionId);
 
@@ -191,6 +204,19 @@ io.on("connection", (socket) => {
             answerPlayer = name;
             io.sockets.emit("answerPlayer", name);
         }
+    });
+
+    socket.on("catInBagPlayer", (playerName) =>
+    {
+        console.log("catInBagPlayer", roundId, category, questionId, playerName);
+        io.sockets.emit("selected", { roundId, category, questionId });
+        io.sockets.emit("leaderPlayer", playerName);
+        catInBagSelected = true;
+        io.sockets.emit("catInBagSelected", catInBagSelected);
+
+        currentQuestion = findQuestion(roundId, category, questionId);
+
+        io.sockets.emit("question", currentQuestion);
     });
 
     socket.on("openAnswer", () =>
