@@ -20,6 +20,7 @@ export function TvQuestion(props: IQuestion)
     const audio: HTMLAudioElement | null = useAudio(config.server + props.audio);
 
     const [ answerOpened, setAnswerOpened ] = React.useState(false);
+    const [ catInBagPlayed, setCatInBagPlayed ] = React.useState(false);
 
     const isImageAnswer = props.answerImage != null;
     const isVideoAnswer = props.answerVideo != null;
@@ -56,6 +57,16 @@ export function TvQuestion(props: IQuestion)
             stop();
         } 
     }, [ play, stop, openAnswer ]);
+
+    const catAudio: HTMLAudioElement | null = useAudio(config.server + "/audio/catInBag.mp3");
+    React.useEffect(() =>
+    {
+        if (props.catInBag && !catInBagSelected && !answerOpened && !catInBagPlayed && catAudio != null)
+        {
+            catAudio.play();
+            catAudio.onended = () => setCatInBagPlayed(true);
+        }
+    }, [ catAudio, props.catInBag, catInBagSelected, answerOpened, catInBagPlayed ]);
 
     if (props.catInBag && !catInBagSelected && !answerOpened)
         return <CatInBag />;

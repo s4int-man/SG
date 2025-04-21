@@ -6,10 +6,12 @@ import styles from "../../styles/CatInBag.module.css";
 import { IPlayer } from "../../types/IProgress";
 import { RootState } from "../../types/RootState";
 
-const EXCLUDE_PLAYERS = [ config.emcee, config.tv, localStorage.getItem("name") ];
+const EXCLUDE_PLAYERS = [ config.emcee, config.tv ];
 
 export const CatInBagPlayer = () => 
 {
+    EXCLUDE_PLAYERS.push(localStorage.getItem("name")!);
+
     const players: IPlayer[] = useSelector(createSelector(
         (state: RootState): IPlayer[] => state.gameReducer.players,
         (players: IPlayer[]): IPlayer[] => players.filter((player: IPlayer): boolean => !EXCLUDE_PLAYERS.includes(player.name))

@@ -248,15 +248,25 @@ io.on("connection", (socket) => {
         console.log("wrong", answerPlayer, currentQuestion);
 
         // списываем баллы
+        //TODO Списываем баллы и ждем следующего
         const player = players.find(p => p.name == answerPlayer);
         player.score -= currentQuestion.price;
 
         savePlayers(players);
         io.sockets.emit("players", players);
 
-        //TODO Списываем баллы и ждем следующего
-        answerPlayer = null;
-        io.sockets.emit("answerPlayer", answerPlayer);
+        if (!catInBagSelected)
+        {
+            answerPlayer = null;
+            io.sockets.emit("answerPlayer", answerPlayer);
+        }
+
+        if (catInBagSelected)
+        {
+            leaderPlayer = answerPlayer;
+            io.sockets.emit("leaderPlayer", leaderPlayer);
+            closeQuestion();
+        }
     });
 
     socket.on("audioPlay", () => {

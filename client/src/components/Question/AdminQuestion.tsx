@@ -46,6 +46,13 @@ export function AdminQuestion(props: IQuestion)
         socket.emit("closeQuestion");
     }
 
+    React.useEffect(() =>
+    {
+        socket.on("openAnswer", openAnswer);
+
+        return () => void socket.off("openAnswer", openAnswer);
+    });
+
     if (props.catInBag && !catInBagSelected && !answerOpened)
         return <CatInBag />;
 
