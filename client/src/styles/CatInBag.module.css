@@ -18,14 +18,22 @@
     border: 2px solid white;
     padding: 5px;
     cursor: pointer;
+    font-size: 20px;
+    font-weight: 700;
+    width: 150px;
+
 }
 
 .title {
-    font-size: 24px;
+    font-size: 32px;
     font-weight: bold;
 }
 
 .help_message {
-    font-size: 14px;
+    font-size: 20px;
     color: #666;
+}
+
+.text {
+    font-size: 20px;
 }

@@ -23,7 +23,8 @@ export const CatInBagPlayer = () =>
     }
 
     return <div className={styles.container}>
-        Тебе достался Кот в мешке<br />Выбери игрока, кому передать вопрос
+        <div className={styles.title}>Кот в мешке</div>
+        <div className={styles.text}>Выбери игрока, кому передать вопрос</div>
         {players.map(player => <div key={player.name} onClick={() => selectPlayer(player.name)} className={styles.player}>{ player.name }</div>)}
     </div>;
 }
