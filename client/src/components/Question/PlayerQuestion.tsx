@@ -15,6 +15,7 @@ import { TextAnswer } from "./TextAnswer";
 export function PlayerQuestion(props: IQuestion)
 {
     const [ answerOpened, setAnswerOpened ] = useState(false);
+    const [ secondsToAnswer, setSecondsToAnswer ] = useState<number>(7);
 
     const leaderPlayer = useSelector((state: RootState) => state.gameReducer.leaderPlayer);
     const answerPlayer: IPlayer | null = useSelector((state: RootState): IPlayer | null => state.gameReducer.answerPlayer);
@@ -26,6 +27,9 @@ export function PlayerQuestion(props: IQuestion)
 
     const onClick = () =>
     {
+        if (secondsToAnswer > 0)
+            return;
+
         socket.emit("answerPlayer", localStorage.getItem("name") || "");
     }
 
@@ -40,6 +44,17 @@ export function PlayerQuestion(props: IQuestion)
 
         return () => void socket.off("openAnswer", openAnswer);
     });
+
+    React.useEffect(() =>
+    {
+        if (secondsToAnswer == 0)
+            return;
+
+        setTimeout(() =>
+        {
+            setSecondsToAnswer(prev => prev - 1);
+        }, 1000);
+    }, [ secondsToAnswer ]);
 
     if (props.catInBag && !catInBagSelected && !answerOpened)
     {
@@ -67,7 +82,7 @@ export function PlayerQuestion(props: IQuestion)
             {answerOpened && <TextAnswer answer={props.answer} />}
             {answerPlayer != null && answerPlayer.name === myName && <div className={styles.player_answer}>Ты отвечаешь!</div>}
             {answerPlayer != null && answerPlayer.name !== myName && <div className={styles.player_answer}>Отвечает: {answerPlayer.name}</div>}
-            {answerPlayer == null && !answerOpened && <button className={styles.button} onClick={onClick}>Ответить</button>}
+            {answerPlayer == null && !answerOpened && <button data-disabled={String(secondsToAnswer > 0)} className={styles.button} onClick={onClick}>{secondsToAnswer > 0 ? secondsToAnswer : "Ответить"}</button>}
         </div>
     </React.Fragment>;
 }

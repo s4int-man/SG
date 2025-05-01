@@ -26,7 +26,8 @@
     font-weight: bold;
 }
 
-.player_info {
+.player_info,
+.question_price {
     display: flex;
     justify-content: center;
     align-items: center;

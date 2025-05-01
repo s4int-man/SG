@@ -19,7 +19,10 @@ export function useConnection()
     }, [ navigate ]);
 
     const onDisconnect = () => console.log("Status: disconnected");
-    const onToGame = React.useCallback(() => navigate("/screens/game"), [ navigate ]);
+    const onToGame = React.useCallback(() => {
+        navigate("/screens/game");
+        dispatch(GameReducer.actions.setCurrentQuestion(null));
+    }, [ navigate, dispatch ]);
     const onToQuestion = React.useCallback(() => navigate("/screens/question"), [ navigate ]);
     const onPlayers = React.useCallback((players: IPlayer[]): void =>
     {

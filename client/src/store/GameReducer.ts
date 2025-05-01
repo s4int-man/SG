@@ -42,7 +42,7 @@ function setSelectedQuestion(state: IGameState, action: PayloadAction<ISelectedQ
 	state.selectedQuestion = action.payload;
 }
 
-function setCurrentQuestion(state: IGameState, action: PayloadAction<IQuestion>): void
+function setCurrentQuestion(state: IGameState, action: PayloadAction<IQuestion | null>): void
 {
 	state.currentQuestion = action.payload;
 }
