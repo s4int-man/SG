@@ -27,9 +27,9 @@ export function PlayerQuestion(props: IQuestion)
 
     const isImageAnswer = props.answerImage != null;
 
-    const onClick = () =>
+    const onClick = (checkTimeout: boolean) =>
     {
-        if (secondsToAnswer > 0)
+        if (secondsToAnswer > 0 && checkTimeout)
         {
             if (timeout.current != null)
                 clearTimeout(timeout.current);
@@ -55,14 +55,18 @@ export function PlayerQuestion(props: IQuestion)
 
     React.useEffect((): void =>
     {
-        if (secondsToAnswer == 0)
-            return;
+        if (secondsToAnswer == 0 || props.catInBag)
+        {
+            if (timeout.current != null)
+                clearTimeout(timeout.current);
+                return;
+        }
 
         timeout.current = setTimeout(() =>
         {
             setSecondsToAnswer(prev => prev - 1);
         }, 1000);
-    }, [ secondsToAnswer ]);
+    }, [ props, secondsToAnswer ]);
 
     if (props.catInBag && !catInBagSelected && !answerOpened)
     {
@@ -76,7 +80,7 @@ export function PlayerQuestion(props: IQuestion)
         return <CatInBagPlayerAnswered />;
 
     if (props.catInBag && !answerOpened)
-        onClick();
+        onClick(false);
 
     return <React.Fragment>
         <hr />
@@ -90,7 +94,7 @@ export function PlayerQuestion(props: IQuestion)
             {answerOpened && <TextAnswer answer={props.answer} />}
             {answerPlayer != null && answerPlayer.name === myName && <div className={styles.player_answer}>Ты отвечаешь!</div>}
             {answerPlayer != null && answerPlayer.name !== myName && <div className={styles.player_answer}>Отвечает: {answerPlayer.name}</div>}
-            {answerPlayer == null && !answerOpened && <button data-disabled={String(secondsToAnswer > 0)} className={styles.button} onClick={onClick}>{secondsToAnswer > 0 ? secondsToAnswer : "Ответить"}</button>}
+            {answerPlayer == null && !answerOpened && <button data-disabled={String(secondsToAnswer > 0)} className={styles.button} onClick={onClick.bind(null, true)}>{secondsToAnswer > 0 ? secondsToAnswer : "Ответить"}</button>}
         </div>
     </React.Fragment>;
 }
