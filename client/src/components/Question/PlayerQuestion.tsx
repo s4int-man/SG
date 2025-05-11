@@ -27,9 +27,9 @@ export function PlayerQuestion(props: IQuestion)
 
     const isImageAnswer = props.answerImage != null;
 
-    const onClick = (checkTimeout: boolean) =>
+    const onClick = () =>
     {
-        if (secondsToAnswer > 0 && checkTimeout)
+        if (secondsToAnswer > 0 && !props.catInBag)
         {
             if (timeout.current != null)
                 clearTimeout(timeout.current);
@@ -80,7 +80,7 @@ export function PlayerQuestion(props: IQuestion)
         return <CatInBagPlayerAnswered />;
 
     if (props.catInBag && !answerOpened)
-        onClick(false);
+        onClick();
 
     return <React.Fragment>
         <hr />
@@ -94,7 +94,7 @@ export function PlayerQuestion(props: IQuestion)
             {answerOpened && <TextAnswer answer={props.answer} />}
             {answerPlayer != null && answerPlayer.name === myName && <div className={styles.player_answer}>Ты отвечаешь!</div>}
             {answerPlayer != null && answerPlayer.name !== myName && <div className={styles.player_answer}>Отвечает: {answerPlayer.name}</div>}
-            {answerPlayer == null && !answerOpened && <button data-disabled={String(secondsToAnswer > 0)} className={styles.button} onClick={onClick.bind(null, true)}>{secondsToAnswer > 0 ? secondsToAnswer : "Ответить"}</button>}
+            {answerPlayer == null && !answerOpened && <button data-disabled={String(secondsToAnswer > 0)} className={styles.button} onClick={onClick}>{secondsToAnswer > 0 ? secondsToAnswer : "Ответить"}</button>}
         </div>
     </React.Fragment>;
 }
