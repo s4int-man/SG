@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import config from "../../config.json";
 import { socket } from "../../connection/Client";
@@ -15,11 +15,13 @@ import { TextAnswer } from "./TextAnswer";
 export function PlayerQuestion(props: IQuestion)
 {
     const [ answerOpened, setAnswerOpened ] = useState(false);
-    const [ secondsToAnswer, setSecondsToAnswer ] = useState<number>(7);
+    const [ secondsToAnswer, setSecondsToAnswer ] = useState<number>(5);
 
     const leaderPlayer = useSelector((state: RootState) => state.gameReducer.leaderPlayer);
     const answerPlayer: IPlayer | null = useSelector((state: RootState): IPlayer | null => state.gameReducer.answerPlayer);
     const catInBagSelected = useSelector((state: RootState) => state.gameReducer.catInBagSelected);
+
+    const timeout = useRef<NodeJS.Timeout | null>(null);
 
     const myName = localStorage.getItem("name") || "";
 
@@ -28,7 +30,13 @@ export function PlayerQuestion(props: IQuestion)
     const onClick = () =>
     {
         if (secondsToAnswer > 0)
+        {
+            if (timeout.current != null)
+                clearTimeout(timeout.current);
+            
+            setSecondsToAnswer(prev => prev + 1);
             return;
+        }
 
         socket.emit("answerPlayer", localStorage.getItem("name") || "");
     }
@@ -45,12 +53,12 @@ export function PlayerQuestion(props: IQuestion)
         return () => void socket.off("openAnswer", openAnswer);
     });
 
-    React.useEffect(() =>
+    React.useEffect((): void =>
     {
         if (secondsToAnswer == 0)
             return;
 
-        setTimeout(() =>
+        timeout.current = setTimeout(() =>
         {
             setSecondsToAnswer(prev => prev - 1);
         }, 1000);
