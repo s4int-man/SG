@@ -5,7 +5,7 @@ import styles from "../../styles/Question.module.css";
 import { IPlayer } from "../../types/IProgress";
 import { IQuestion } from "../../types/IQuestion";
 import { RootState } from "../../types/RootState";
-import { CatInBag } from "./CatInBag";
+import { CatInBagPlayer } from "./CatInBagPlayer";
 import { ImageAnswer } from "./ImageAnswer";
 import { QuestionImage } from "./QuestionImage";
 import { TextAnswer } from "./TextAnswer";
@@ -54,8 +54,9 @@ export function AdminQuestion(props: IQuestion)
         return () => void socket.off("openAnswer", openAnswer);
     });
 
+    // Admin always can assign the cat-in-bag target (e.g. when Admin selected the question)
     if (props.catInBag && !catInBagSelected && !answerOpened)
-        return <CatInBag />;
+        return <CatInBagPlayer />;
 
     return <React.Fragment>
         <div className={styles.question}>

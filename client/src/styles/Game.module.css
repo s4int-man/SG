@@ -1,13 +1,16 @@
 .game {
   display: flex;
   flex-direction: column;
-  flex: 1;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
   color: var(--gold);
   padding: 4px 0 12px;
   gap: 12px;
 }
 
 .select_text {
+  flex-shrink: 0;
   font-family: var(--font-display);
   font-size: clamp(18px, 2.5vw, 28px);
   letter-spacing: 0.04em;

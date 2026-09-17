@@ -115,6 +115,33 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+}
+
+.imageLoading::before {
+  content: "";
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 3px solid var(--border);
+  border-top-color: var(--gold-bright);
+  animation: imageSpin 0.8s linear infinite;
+}
+
+.imageLoading .image {
+  opacity: 0;
+}
+
+.imageLoaded .image {
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+@keyframes imageSpin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .image {

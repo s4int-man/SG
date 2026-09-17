@@ -53,3 +53,24 @@
   font-size: 20px;
   color: var(--gold);
 }
+
+.random {
+  margin-top: 8px;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--bg-deep);
+  background: linear-gradient(180deg, var(--gold-bright) 0%, var(--gold) 100%);
+  border: none;
+  border-radius: 10px;
+  padding: 12px 28px;
+  width: min(100%, 220px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+}
+
+.random:hover {
+  filter: brightness(1.05);
+}
+

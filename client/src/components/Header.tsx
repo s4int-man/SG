@@ -7,9 +7,14 @@ export function Header()
 {
     const name = localStorage.getItem("name") || "";
     const myPlayer = useSelector((state: RootState) => state.gameReducer.players.find(p => p.name === name));
-    const isAdmin = myPlayer?.name === config.emcee;
+    const isAdmin = name === config.emcee;
+    const isTv = name === config.tv;
 
-    if (myPlayer == null)
+    if (!name)
+        return null;
+
+    // Don't hide header if player briefly missing from list (mobile reconnect / score 0 cleanup)
+    if (myPlayer == null && !isAdmin && !isTv)
         return null;
 
     const onAdminControls = () =>
@@ -28,7 +33,7 @@ export function Header()
                 Управление
             </button>
         )}
-        {!isAdmin && myPlayer.name != config.tv &&
+        {!isAdmin && !isTv && myPlayer != null &&
             <div className={styles.player_info}>
                 <div className={styles.name}>{myPlayer.name}:</div>
                 <div className={styles.score}>{myPlayer.score} очков</div>
