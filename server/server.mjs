@@ -12,6 +12,7 @@ const QUESTION_SELECT_HIGHLIGHT_MS = 2000;
 let progress = loadProgress();
 let players = loadPlayers();
 let answerPlayer = null;
+let answerQueue = [];
 let currentQuestion = null;
 let currentRound = findCurrentRound();
 let isOpened = false;
@@ -95,6 +96,20 @@ function findCurrentRound()
     return progress.rounds.length;
 }
 
+
+function syncAnswerState(io)
+{
+    answerPlayer = answerQueue.length > 0 ? answerQueue[0] : null;
+    io.sockets.emit("answerPlayer", answerPlayer);
+    io.sockets.emit("answerQueue", answerQueue);
+}
+
+function clearAnswerQueue(io)
+{
+    answerQueue = [];
+    syncAnswerState(io);
+}
+
 const app = express();
 app.use(express.static("public", {
     maxAge: "7d",
@@ -137,9 +152,8 @@ io.on("connection", (socket) => {
         catInBagSelected = false;
         io.sockets.emit("catInBagSelected", catInBagSelected);
 
-        answerPlayer = null;
         currentQuestion = null;
-        io.sockets.emit("answerPlayer", answerPlayer);
+        clearAnswerQueue(io);
 
         if (roundFinished(currentRound))
             sendNextRound();
@@ -165,8 +179,7 @@ io.on("connection", (socket) => {
             io.sockets.emit("question", currentQuestion);
             socket.emit("to_question");
 
-            if (answerPlayer != null)
-                io.sockets.emit("answerPlayer", answerPlayer);
+            syncAnswerState(io);
         }
 
         socket.once("disconnect", () =>
@@ -192,6 +205,7 @@ io.on("connection", (socket) => {
     socket.on("selected", (_roundId, _category, _questionId, _leaderPlayer) =>
     {
         isOpened = false;
+        clearAnswerQueue(io);
         roundId = _roundId;
         category = _category;
         questionId = _questionId;
@@ -214,18 +228,28 @@ io.on("connection", (socket) => {
             return;
         }
 
-        console.log("try answer", answerPlayer, name);
-        io.sockets.emit("audioStop");
+        if (name == null || name === EMCEE || name === TV)
+            return;
 
-        if (answerPlayer == null)
+        if (answerQueue.includes(name))
         {
-            answerPlayer = name;
-            io.sockets.emit("answerPlayer", name);
+            console.log("already in answer queue", name);
+            return;
         }
+
+        const wasEmpty = answerQueue.length === 0;
+        answerQueue.push(name);
+        console.log("answer queue", answerQueue);
+
+        if (wasEmpty)
+            io.sockets.emit("audioStop");
+
+        syncAnswerState(io);
     });
 
     socket.on("catInBagPlayer", (playerName) =>
     {
+        clearAnswerQueue(io);
         console.log("catInBagPlayer", roundId, category, questionId, playerName);
         io.sockets.emit("selected", { roundId, category, questionId });
         io.sockets.emit("leaderPlayer", playerName);
@@ -268,15 +292,11 @@ io.on("connection", (socket) => {
         // списываем баллы
         //TODO Списываем баллы и ждем следующего
         const player = players.find(p => p.name == answerPlayer);
-        player.score -= currentQuestion.price;
-
-        savePlayers(players);
-        io.sockets.emit("players", players);
-
-        if (!catInBagSelected)
+        if (player != null)
         {
-            answerPlayer = null;
-            io.sockets.emit("answerPlayer", answerPlayer);
+            player.score -= currentQuestion.price;
+            savePlayers(players);
+            io.sockets.emit("players", players);
         }
 
         if (catInBagSelected)
@@ -284,7 +304,13 @@ io.on("connection", (socket) => {
             leaderPlayer = answerPlayer;
             io.sockets.emit("leaderPlayer", leaderPlayer);
             closeQuestion();
+            return;
         }
+
+        // remove current answerer, promote next in queue
+        if (answerQueue.length > 0)
+            answerQueue.shift();
+        syncAnswerState(io);
     });
 
     socket.on("audioPlay", () => {
@@ -342,10 +368,10 @@ io.on("connection", (socket) => {
 
         players = players.filter(p => p.name != playerName);
 
-        if (answerPlayer === playerName)
+        if (answerQueue.includes(playerName))
         {
-            answerPlayer = null;
-            io.sockets.emit("answerPlayer", answerPlayer);
+            answerQueue = answerQueue.filter(n => n !== playerName);
+            syncAnswerState(io);
         }
 
         if (leaderPlayer === playerName)

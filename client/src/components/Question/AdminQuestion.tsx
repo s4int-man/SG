@@ -5,6 +5,7 @@ import styles from "../../styles/Question.module.css";
 import { IPlayer } from "../../types/IProgress";
 import { IQuestion } from "../../types/IQuestion";
 import { RootState } from "../../types/RootState";
+import { AnswerStatus } from "./AnswerStatus";
 import { CatInBagPlayer } from "./CatInBagPlayer";
 import { ImageAnswer } from "./ImageAnswer";
 import { QuestionImage } from "./QuestionImage";
@@ -63,7 +64,7 @@ export function AdminQuestion(props: IQuestion)
             <div className="text">
                 {props.text}
             </div>
-            {answerPlayer != null && <div className={styles.player_answer}>Отвечает: {answerPlayer.name}</div>}
+            <AnswerStatus />
             {props.image && !isImageAnswer && <QuestionImage src={props.image} />}
             {isImageAnswer && <ImageAnswer answer={props.answerImage!} />}
             <TextAnswer answer={props.answer} />

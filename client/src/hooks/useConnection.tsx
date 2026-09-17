@@ -23,6 +23,8 @@ export function useConnection()
         navigate("/screens/game");
         dispatch(GameReducer.actions.setCurrentQuestion(null));
         dispatch(GameReducer.actions.setSelectedQuestion(null));
+        dispatch(GameReducer.actions.setAnswerQueue([]));
+        dispatch(GameReducer.actions.setAnswerPlayer(null));
     }, [ navigate, dispatch ]);
     const onToQuestion = React.useCallback(() => navigate("/screens/question"), [ navigate ]);
     const onPlayers = React.useCallback((players: IPlayer[]): void =>
@@ -57,6 +59,11 @@ export function useConnection()
         dispatch(GameReducer.actions.setAnswerPlayer(answerPlayer));
     }, [ dispatch ]);
 
+    const onAnswerQueue = React.useCallback((answerQueue: string[]): void =>
+    {
+        dispatch(GameReducer.actions.setAnswerQueue(answerQueue ?? []));
+    }, [ dispatch ]);
+
     const onCurrentRound = React.useCallback((currentRound: number): void =>
     {
         console.log("currentRound", currentRound);
@@ -84,6 +91,7 @@ export function useConnection()
         socket.on("selected", onSelectedQuestion);
         socket.on("question", onQuestion);
         socket.on("answerPlayer", onAnswerPlayer);
+        socket.on("answerQueue", onAnswerQueue);
         socket.on("currentRound", onCurrentRound);
         socket.on("leaderPlayer", onLeaderPlayer);
         socket.on("catInBagSelected", onCatInBagSelected);
@@ -99,9 +107,10 @@ export function useConnection()
             socket.off("selected", onSelectedQuestion);
             socket.off("question", onQuestion);
             socket.off("answerPlayer", onAnswerPlayer);
+            socket.off("answerQueue", onAnswerQueue);
             socket.off("currentRound", onCurrentRound);
             socket.off("leaderPlayer", onLeaderPlayer);
             socket.off("catInBagSelected", onCatInBagSelected);
         }
-    }, [ onConnect, onToGame, onToQuestion, onPlayers, onProgress, onSelectedQuestion, onQuestion, onAnswerPlayer, onCurrentRound, onLeaderPlayer, onCatInBagSelected ]);
+    }, [ onConnect, onToGame, onToQuestion, onPlayers, onProgress, onSelectedQuestion, onQuestion, onAnswerPlayer, onAnswerQueue, onCurrentRound, onLeaderPlayer, onCatInBagSelected ]);
 }

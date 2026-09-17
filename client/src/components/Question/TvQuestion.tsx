@@ -4,9 +4,9 @@ import config from "../../config.json";
 import { socket } from "../../connection/Client";
 import { useAudio } from "../../hooks/useAudio";
 import styles from "../../styles/Question.module.css";
-import { IPlayer } from "../../types/IProgress";
 import { IQuestion } from "../../types/IQuestion";
 import { RootState } from "../../types/RootState";
+import { AnswerStatus } from "./AnswerStatus";
 import { AudioAnswer } from "./AudioAnswer";
 import { CatInBag } from "./CatInBag";
 import { ImageAnswer } from "./ImageAnswer";
@@ -16,7 +16,6 @@ import { VideoAnswer } from "./VideoAnswer";
 
 export function TvQuestion(props: IQuestion)
 {
-    const answerPlayer: IPlayer | null = useSelector((state: RootState): IPlayer | null => state.gameReducer.answerPlayer);
     const catInBagSelected = useSelector((state: RootState) => state.gameReducer.catInBagSelected);
     const audio: HTMLAudioElement | null = useAudio(config.server + props.audio);
 
@@ -83,7 +82,7 @@ export function TvQuestion(props: IQuestion)
             {answerOpened && isVideoAnswer && <VideoAnswer answer={props.answerVideo!} />}
             {answerOpened && isAudioAnswer && !isVideoAnswer && <AudioAnswer answer={props.answerAudio!} />}
             {answerOpened && <TextAnswer answer={props.answer} />}
-            {answerPlayer != null && <div className={styles.player_answer}>Отвечает: {answerPlayer.name}</div>}
+            <AnswerStatus />
         </div>
     </React.Fragment>;
 }

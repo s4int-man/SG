@@ -1,11 +1,10 @@
 import React, { useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import config from "../../config.json";
 import { socket } from "../../connection/Client";
 import styles from "../../styles/Question.module.css";
-import { IPlayer } from "../../types/IProgress";
 import { IQuestion } from "../../types/IQuestion";
 import { RootState } from "../../types/RootState";
+import { AnswerStatus } from "./AnswerStatus";
 import { CatInBag } from "./CatInBag";
 import { CatInBagPlayer } from "./CatInBagPlayer";
 import { CatInBagPlayerAnswered } from "./CatInBagPlayerAnswered";
@@ -19,12 +18,13 @@ export function PlayerQuestion(props: IQuestion)
     const [ secondsToAnswer, setSecondsToAnswer ] = useState<number>(5);
 
     const leaderPlayer = useSelector((state: RootState) => state.gameReducer.leaderPlayer);
-    const answerPlayer: IPlayer | null = useSelector((state: RootState): IPlayer | null => state.gameReducer.answerPlayer);
+    const answerQueue = useSelector((state: RootState) => state.gameReducer.answerQueue);
     const catInBagSelected = useSelector((state: RootState) => state.gameReducer.catInBagSelected);
 
     const timeout = useRef<NodeJS.Timeout | null>(null);
 
     const myName = localStorage.getItem("name") || "";
+    const inQueue = answerQueue.includes(myName);
 
     const isImageAnswer = props.answerImage != null;
 
@@ -34,18 +34,21 @@ export function PlayerQuestion(props: IQuestion)
         {
             if (timeout.current != null)
                 clearTimeout(timeout.current);
-            
+
             setSecondsToAnswer(prev => prev + 1);
             return;
         }
 
-        socket.emit("answerPlayer", localStorage.getItem("name") || "");
-    }
+        if (inQueue)
+            return;
+
+        socket.emit("answerPlayer", myName);
+    };
 
     const openAnswer = () =>
     {
         setAnswerOpened(true);
-    }
+    };
 
     React.useEffect(() =>
     {
@@ -60,7 +63,7 @@ export function PlayerQuestion(props: IQuestion)
         {
             if (timeout.current != null)
                 clearTimeout(timeout.current);
-                return;
+            return;
         }
 
         timeout.current = setTimeout(() =>
@@ -92,9 +95,16 @@ export function PlayerQuestion(props: IQuestion)
             {props.image && answerOpened && !isImageAnswer && <QuestionImage src={props.image} />}
             {answerOpened && isImageAnswer && <ImageAnswer answer={props.answerImage!} />}
             {answerOpened && <TextAnswer answer={props.answer} />}
-            {answerPlayer != null && answerPlayer.name === myName && <div className={styles.player_answer}>Ты отвечаешь!</div>}
-            {answerPlayer != null && answerPlayer.name !== myName && <div className={styles.player_answer}>Отвечает: {answerPlayer.name}</div>}
-            {answerPlayer == null && !answerOpened && <button data-disabled={String(secondsToAnswer > 0)} className={styles.answer_button} onClick={onClick}>{secondsToAnswer > 0 ? secondsToAnswer : "Ответить"}</button>}
+            <AnswerStatus myName={myName} />
+            {!answerOpened && !inQueue && (
+                <button
+                    data-disabled={String(secondsToAnswer > 0)}
+                    className={styles.answer_button}
+                    onClick={onClick}
+                >
+                    {secondsToAnswer > 0 ? secondsToAnswer : "Ответить"}
+                </button>
+            )}
         </div>
     </React.Fragment>;
 }

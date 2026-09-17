@@ -11,6 +11,7 @@ interface IGameState
 	currentQuestion: IQuestion | null;
 	selectedQuestion: ISelectedQuestion | null;
 	answerPlayer: IPlayer | null;
+	answerQueue: string[];
 	leaderPlayer?: string;
 	catInBagSelected: boolean;
 }
@@ -22,6 +23,7 @@ const initialState: IGameState = {
 	selectedQuestion: null,
 	currentQuestion: null,
 	answerPlayer: null,
+	answerQueue: [],
 	leaderPlayer: undefined,
 	catInBagSelected: false,
 };
@@ -60,8 +62,13 @@ function setAnswerPlayer(state: IGameState, action: PayloadAction<string | null>
 		return;
 	}
 
-	const player = state.players.find(p => p.name === action.payload)!;
-	state.answerPlayer = player;
+	const player = state.players.find(p => p.name === action.payload);
+	state.answerPlayer = player ?? { name: action.payload, score: 0, online: true };
+}
+
+function setAnswerQueue(state: IGameState, action: PayloadAction<string[]>): void
+{
+	state.answerQueue = action.payload;
 }
 
 function setLeaderPlayer(state: IGameState, action: PayloadAction<string | undefined>): void
@@ -83,6 +90,7 @@ export const GameReducer = createSlice({
 		setSelectedQuestion,
 		setCurrentQuestion,
 		setAnswerPlayer,
+		setAnswerQueue,
 		setCurrentRound,
 		setLeaderPlayer,
 		setCatInBagSelected,
