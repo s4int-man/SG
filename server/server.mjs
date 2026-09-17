@@ -385,6 +385,58 @@ io.on("connection", (socket) => {
         console.log("deletePlayer", playerName);
     });
 
+    socket.on("renamePlayer", (newName) =>
+    {
+        if (socketName == null || socketName === EMCEE || socketName === TV)
+        {
+            socket.emit("renameError", "Нельзя сменить это имя");
+            return;
+        }
+
+        const nextName = String(newName ?? "").trim();
+        if (nextName === "")
+        {
+            socket.emit("renameError", "Введи имя");
+            return;
+        }
+
+        if (nextName === socketName)
+        {
+            socket.emit("renamed", nextName);
+            return;
+        }
+
+        if (nextName === EMCEE || nextName === TV || players.some(p => p.name === nextName))
+        {
+            socket.emit("renameError", "Имя уже занято");
+            return;
+        }
+
+        const player = players.find(p => p.name === socketName);
+        if (player == null)
+        {
+            socket.emit("renameError", "Игрок не найден");
+            return;
+        }
+
+        const oldName = socketName;
+        player.name = nextName;
+        socketName = nextName;
+
+        answerQueue = answerQueue.map(n => n === oldName ? nextName : n);
+        if (answerPlayer === oldName)
+            answerPlayer = nextName;
+        if (leaderPlayer === oldName)
+            leaderPlayer = nextName;
+
+        savePlayers(players);
+        syncAnswerState(io);
+        io.sockets.emit("players", players);
+        io.sockets.emit("leaderPlayer", leaderPlayer);
+        socket.emit("renamed", nextName);
+        console.log("renamePlayer", oldName, "->", nextName);
+    });
+
 });
 
 httpServer
