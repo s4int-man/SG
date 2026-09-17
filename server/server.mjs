@@ -5,6 +5,9 @@ import { loadPlayers, loadProgress, savePlayers, saveProgress } from "./progress
 
 const hostname = "localhost";
 const port = 4000;
+const EMCEE = "Admin";
+const TV = "TV";
+const QUESTION_SELECT_HIGHLIGHT_MS = 2000;
 
 let progress = loadProgress();
 let players = loadPlayers();
@@ -39,10 +42,14 @@ function disconnectPlayer(name)
     if (player == null)
         return;
 
-    if (player.score != 0)
+    // Admin/TV always stay in list — otherwise header disappears on mobile reconnect
+    if (name === EMCEE || name === TV || player.score != 0)
+    {
         player.online = false;
-    else
-        players = players.filter(p => p.name != name);
+        return;
+    }
+
+    players = players.filter(p => p.name != name);
 }
 
 function findQuestion(roundId, category, questionId)
@@ -89,7 +96,11 @@ function findCurrentRound()
 }
 
 const app = express();
-app.use(express.static("public"));
+app.use(express.static("public", {
+    maxAge: "7d",
+    etag: true,
+    lastModified: true,
+}));
 
 const httpServer = createServer(app);
 
@@ -100,6 +111,13 @@ const io = new Server(httpServer, {
 });
 
 io.on("connection", (socket) => {
+    let socketName = null;
+
+    function isAdmin()
+    {
+        return socketName === EMCEE;
+    }
+
     function sendNextRound()
     {
         currentRound++;
@@ -121,7 +139,6 @@ io.on("connection", (socket) => {
 
         answerPlayer = null;
         currentQuestion = null;
-        io.sockets.emit("selected", currentQuestion);
         io.sockets.emit("answerPlayer", answerPlayer);
 
         if (roundFinished(currentRound))
@@ -131,6 +148,7 @@ io.on("connection", (socket) => {
     socket.on("login", (name) =>
     {
         console.log(name, "logged in");
+        socketName = name;
 
         addPlayer(name);
         savePlayers(players);
@@ -185,7 +203,7 @@ io.on("connection", (socket) => {
 
         currentQuestion = findQuestion(roundId, category, questionId);
 
-        setTimeout(() => io.sockets.emit("question", currentQuestion), 2000);
+        setTimeout(() => io.sockets.emit("question", currentQuestion), QUESTION_SELECT_HIGHLIGHT_MS);
     });
 
     socket.on("answerPlayer", (name) =>
@@ -278,8 +296,69 @@ io.on("connection", (socket) => {
         if (currentQuestion != null)
             closeQuestion();
 
+        io.sockets.emit("selected", null);
         io.sockets.emit("to_game");
-    })
+    });
+
+    socket.on("updatePlayerScore", (playerName, score) =>
+    {
+        if (!isAdmin())
+        {
+            console.log("updatePlayerScore ignored: not admin", socketName);
+            return;
+        }
+
+        if (playerName === EMCEE || playerName === TV)
+            return;
+
+        const player = players.find(p => p.name == playerName);
+        if (player == null)
+            return;
+
+        const nextScore = Number(score);
+        if (!Number.isFinite(nextScore))
+            return;
+
+        player.score = nextScore;
+        savePlayers(players);
+        io.sockets.emit("players", players);
+        console.log("updatePlayerScore", playerName, nextScore);
+    });
+
+    socket.on("deletePlayer", (playerName) =>
+    {
+        if (!isAdmin())
+        {
+            console.log("deletePlayer ignored: not admin", socketName);
+            return;
+        }
+
+        if (playerName === EMCEE || playerName === TV)
+            return;
+
+        const exists = players.some(p => p.name == playerName);
+        if (!exists)
+            return;
+
+        players = players.filter(p => p.name != playerName);
+
+        if (answerPlayer === playerName)
+        {
+            answerPlayer = null;
+            io.sockets.emit("answerPlayer", answerPlayer);
+        }
+
+        if (leaderPlayer === playerName)
+        {
+            leaderPlayer = undefined;
+            io.sockets.emit("leaderPlayer", leaderPlayer);
+        }
+
+        savePlayers(players);
+        io.sockets.emit("players", players);
+        console.log("deletePlayer", playerName);
+    });
+
 });
 
 httpServer
