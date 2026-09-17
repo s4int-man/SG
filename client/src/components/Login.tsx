@@ -2,7 +2,6 @@
 import React from "react";
 import styles from "../styles/Login.module.css";
 import { socket } from "../connection/Client";
-// import { useRouter } from "next/navigation";
 
 export function Login()
 {
@@ -15,13 +14,33 @@ export function Login()
 
     const onClick = (): void =>
     {
-        localStorage.setItem("name", text);
-        socket.emit("login", text);
+        if (!text.trim())
+            return;
+
+        localStorage.setItem("name", text.trim());
+        socket.emit("login", text.trim());
+    }
+
+    const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void =>
+    {
+        if (e.key === "Enter")
+            onClick();
     }
 
     return <div className={styles.login}>
-        <div>Представься</div>
-        <input className={styles.username} type="text" value={text} onChange={onChange} />
-        <button className={styles.button} onClick={onClick}>ОК</button>
+        <h1 className={styles.brand}>Святая игра</h1>
+        <div className={styles.panel}>
+            <div className={styles.label}>Представься</div>
+            <input
+                className={styles.username}
+                type="text"
+                value={text}
+                onChange={onChange}
+                onKeyDown={onKeyDown}
+                placeholder="Имя"
+                autoFocus
+            />
+            <button className={styles.button} onClick={onClick}>ОК</button>
+        </div>
     </div>;
 }

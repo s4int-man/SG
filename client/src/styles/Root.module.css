@@ -1,11 +1,32 @@
-body,
 .root {
-    background-color: #000285;
-    color: #dbd58e;
+  min-height: 100%;
+  color: var(--gold);
 }
 
 .layout {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100vh;
+  max-height: 100dvh;
+  overflow: hidden;
+}
+
+.board {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 8px 12px;
+  flex: 1;
+}
+
+@media (orientation: portrait) {
+  .board {
+    gap: 10px;
+    padding: 8px;
+  }
 }

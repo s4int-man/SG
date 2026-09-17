@@ -37,7 +37,7 @@ function setProgress(state: IGameState, action: PayloadAction<IGame>): void
 	state.progress = action.payload;
 }
 
-function setSelectedQuestion(state: IGameState, action: PayloadAction<ISelectedQuestion>): void
+function setSelectedQuestion(state: IGameState, action: PayloadAction<ISelectedQuestion | null>): void
 {
 	state.selectedQuestion = action.payload;
 }

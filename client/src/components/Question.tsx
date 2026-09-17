@@ -4,6 +4,7 @@ import { IQuestion } from "../types/IQuestion";
 import { AdminQuestion } from "./Question/AdminQuestion";
 import { TvQuestion } from "./Question/TvQuestion";
 import { PlayerQuestion } from "./Question/PlayerQuestion";
+import { QuestionMeta } from "./QuestionMeta";
 import config from "../config.json";
 
 export function Question()
@@ -15,11 +16,16 @@ export function Question()
     if (currentQuestion == null)
         return null;
 
+    let body;
     if (name === config.emcee)
-        return <AdminQuestion {...currentQuestion} />;
+        body = <AdminQuestion {...currentQuestion} />;
+    else if (name === config.tv)
+        body = <TvQuestion {...currentQuestion} />;
+    else
+        body = <PlayerQuestion {...currentQuestion} />;
 
-    if (name === config.tv)
-        return <TvQuestion {...currentQuestion} />;
-
-    return <PlayerQuestion {...currentQuestion} />;
+    return <>
+        <QuestionMeta />
+        {body}
+    </>;
 }

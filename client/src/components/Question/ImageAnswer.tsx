@@ -1,7 +1,6 @@
-import config from "../../config.json";
-import styles from "../../styles/Question.module.css";
+import { QuestionImage } from "./QuestionImage";
 
 export function ImageAnswer(props: { answer: string })
 {
-    return <div className={styles.image} style={{ backgroundImage: "url(" + config.server + props.answer + ")" }} />;
+    return <QuestionImage src={props.answer} alt="Ответ" />;
 }

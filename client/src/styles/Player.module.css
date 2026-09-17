@@ -1,14 +1,38 @@
 .player {
-    background-color: red;
-    color: white;
-    padding: 5px;
-    font-size: 16px;
-    border: 1px solid;
-    opacity: 0.8;
-    flex-grow: 1;
-    height: 54px;
+  background: linear-gradient(160deg, #a32020 0%, var(--offline) 100%);
+  color: #fff;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius);
+  opacity: 0.92;
+  flex-grow: 1;
+  min-height: 54px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  box-shadow: var(--shadow);
+  letter-spacing: 0.02em;
 }
 
 .online {
-    background-color: green;
+  background: linear-gradient(160deg, #2a9a4e 0%, var(--online) 100%);
 }
+
+.editable {
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.editable:hover {
+  filter: brightness(1.08);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+}
+
+.editable:active {
+  transform: scale(0.98);
+}
+

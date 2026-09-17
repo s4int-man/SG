@@ -1,36 +1,79 @@
 .header {
-    display: flex;
-    padding: 15px;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    background-color: #000285;
-    color: #dbd58e;
-    font-size: 24px;
-    box-sizing: border-box;
-    height: 94px;
+  display: flex;
+  flex-shrink: 0;
+  padding: 12px 20px;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  background: linear-gradient(180deg, rgba(18, 24, 106, 0.95) 0%, rgba(8, 12, 55, 0.9) 100%);
+  color: var(--gold);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
+  min-height: 80px;
+  backdrop-filter: blur(6px);
 }
 
 @media (orientation: portrait) {
-    .header {
-        box-sizing: border-box;
-        height: 57px;
-    }
-    .title {
-      font-size: 20px !important;
-    }
+  .header {
+    min-height: 56px;
+    padding: 8px 12px;
+    gap: 8px;
+  }
+
+  .title {
+    font-size: 22px !important;
+  }
 }
 
 .title {
-    font-size: 48px;
-    font-weight: bold;
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold-bright);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
 }
 
-.player_info,
-.question_price {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    font-size: 16px;
+.player_info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: rgba(4, 6, 31, 0.35);
+  white-space: nowrap;
 }
+
+.admin_button {
+  margin-left: auto;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--bg-deep);
+  background: linear-gradient(180deg, var(--gold-bright) 0%, var(--gold) 100%);
+  border: none;
+  border-radius: var(--radius);
+  padding: 10px 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  white-space: nowrap;
+}
+
+.admin_button:hover {
+  filter: brightness(1.05);
+}
+
+@media (orientation: portrait) {
+  .admin_button {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+}
+

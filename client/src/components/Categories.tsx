@@ -4,6 +4,7 @@ import { Category } from "./Category";
 import { useSelector } from "react-redux";
 import { RootState } from "../types/RootState";
 import { createSelector } from "@reduxjs/toolkit";
+import styles from "../styles/Root.module.css";
 
 export const Categories = () =>
 {
@@ -17,7 +18,7 @@ export const Categories = () =>
     if (categories == null)
         return null;
     
-    return <div className="table center-block">
+    return <div className={styles.board}>
         {
             categories
                 .map((category: ICategory): React.ReactElement =>

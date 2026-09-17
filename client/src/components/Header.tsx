@@ -7,15 +7,28 @@ export function Header()
 {
     const name = localStorage.getItem("name") || "";
     const myPlayer = useSelector((state: RootState) => state.gameReducer.players.find(p => p.name === name));
-    const question = useSelector((state: RootState) => state.gameReducer.currentQuestion);
+    const isAdmin = myPlayer?.name === config.emcee;
 
     if (myPlayer == null)
         return null;
 
+    const onAdminControls = () =>
+    {
+        // TODO: admin controls action
+    };
+
     return <div className={styles.header}>
-        <div className={styles.title} >Святая игра</div>
-        {question != null && <div className={styles.question_price}>Вопрос на: {question.price}</div>}
-        {myPlayer.name != config.emcee && myPlayer.name != "TV" &&
+        <div className={styles.title}>Святая игра</div>
+        {isAdmin && (
+            <button
+                type="button"
+                className={styles.admin_button}
+                onClick={onAdminControls}
+            >
+                Управление
+            </button>
+        )}
+        {!isAdmin && myPlayer.name != config.tv &&
             <div className={styles.player_info}>
                 <div className={styles.name}>{myPlayer.name}:</div>
                 <div className={styles.score}>{myPlayer.score} очков</div>

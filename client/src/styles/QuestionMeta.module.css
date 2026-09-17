@@ -1,0 +1,34 @@
+.meta {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  padding: 8px 16px 0;
+  font-family: var(--font-display);
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+.category {
+  font-size: clamp(16px, 2.4vw, 24px);
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--gold-bright);
+}
+
+.sep {
+  color: var(--gold-dim);
+  font-size: 20px;
+}
+
+.price {
+  font-size: clamp(18px, 2.6vw, 28px);
+  font-weight: 700;
+  color: var(--gold);
+  padding: 4px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: rgba(4, 6, 31, 0.35);
+}

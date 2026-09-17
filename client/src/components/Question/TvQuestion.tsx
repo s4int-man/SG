@@ -10,6 +10,7 @@ import { RootState } from "../../types/RootState";
 import { AudioAnswer } from "./AudioAnswer";
 import { CatInBag } from "./CatInBag";
 import { ImageAnswer } from "./ImageAnswer";
+import { QuestionImage } from "./QuestionImage";
 import { TextAnswer } from "./TextAnswer";
 import { VideoAnswer } from "./VideoAnswer";
 
@@ -72,13 +73,12 @@ export function TvQuestion(props: IQuestion)
         return <CatInBag />;
     
     return <React.Fragment>
-        <hr />
         <div className={styles.question}>
             <div className="text">
                 {props.text}
             </div>
-            {props.image && !answerOpened && <div className={styles.image} style={{ backgroundImage: "url(" + config.server + props.image + ")" }} />}
-            {props.image && answerOpened && !isImageAnswer && !isVideoAnswer && <div className={styles.image} style={{ backgroundImage: "url(" + config.server + props.image + ")" }} />}
+            {props.image && !answerOpened && <QuestionImage src={props.image} />}
+            {props.image && answerOpened && !isImageAnswer && !isVideoAnswer && <QuestionImage src={props.image} />}
             {answerOpened && isImageAnswer && <ImageAnswer answer={props.answerImage!} />}
             {answerOpened && isVideoAnswer && <VideoAnswer answer={props.answerVideo!} />}
             {answerOpened && isAudioAnswer && !isVideoAnswer && <AudioAnswer answer={props.answerAudio!} />}

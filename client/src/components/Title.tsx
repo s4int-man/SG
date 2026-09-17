@@ -1,11 +1,14 @@
 export const Title = (): React.ReactElement =>
 {
-    const style: React.CSSProperties =
-    {
-        fontSize: "50px",
-    };
-
-    return <div className="title" style={style}>
-        {"Своя игра".toUpperCase()}
+    return <div className="title" style={{
+        fontFamily: 'var(--font-display)',
+        fontSize: 'clamp(36px, 8vw, 64px)',
+        fontWeight: 700,
+        letterSpacing: '0.08em',
+        textTransform: 'uppercase',
+        color: 'var(--gold-bright)',
+        textAlign: 'center',
+    }}>
+        Святая игра
     </div>;
 }

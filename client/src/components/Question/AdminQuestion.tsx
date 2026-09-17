@@ -7,6 +7,7 @@ import { IQuestion } from "../../types/IQuestion";
 import { RootState } from "../../types/RootState";
 import { CatInBag } from "./CatInBag";
 import { ImageAnswer } from "./ImageAnswer";
+import { QuestionImage } from "./QuestionImage";
 import { TextAnswer } from "./TextAnswer";
 
 export function AdminQuestion(props: IQuestion)
@@ -62,6 +63,7 @@ export function AdminQuestion(props: IQuestion)
                 {props.text}
             </div>
             {answerPlayer != null && <div className={styles.player_answer}>Отвечает: {answerPlayer.name}</div>}
+            {props.image && !isImageAnswer && <QuestionImage src={props.image} />}
             {isImageAnswer && <ImageAnswer answer={props.answerImage!} />}
             <TextAnswer answer={props.answer} />
         </div>
@@ -74,7 +76,7 @@ export function AdminQuestion(props: IQuestion)
             }
             {props.audio != null && !playClicked && <button className={styles.button} onClick={audioPlay}>Воспроизвести</button>}
             {answerOpened && <button className={styles.close_button} onClick={closeQuestion}>Закрыть вопрос</button>}
-            {answerPlayer == null && !answerOpened && <button className={styles.close_button} onClick={openAnswer}>Открыть ответ</button>}
+            {answerPlayer == null && !answerOpened && <button className={styles.open_answer_button} onClick={openAnswer}>Открыть ответ</button>}
         </div>
     </React.Fragment>;
 }

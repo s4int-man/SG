@@ -17,10 +17,13 @@ export function LoggedIn(props: { name: string, setName: (name: string | null) =
     }
 
     return <div className={styles.loggedIn}>
-        <div>Это ты: <b>{props.name}</b>?</div>
-        <div className={styles.buttons}>
-            <button className={styles.button} onClick={yesClick}>Да</button>
-            <button className={styles.button} onClick={noClick}>Нет</button>
+        <div className={styles.panel}>
+            <div>Это ты?</div>
+            <div className={styles.name}>{props.name}</div>
+            <div className={styles.buttons}>
+                <button className={`${styles.button} ${styles.buttonYes}`} onClick={yesClick}>Да</button>
+                <button className={`${styles.button} ${styles.buttonNo}`} onClick={noClick}>Нет</button>
+            </div>
         </div>
     </div>;
 }

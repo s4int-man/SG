@@ -22,6 +22,7 @@ export function useConnection()
     const onToGame = React.useCallback(() => {
         navigate("/screens/game");
         dispatch(GameReducer.actions.setCurrentQuestion(null));
+        dispatch(GameReducer.actions.setSelectedQuestion(null));
     }, [ navigate, dispatch ]);
     const onToQuestion = React.useCallback(() => navigate("/screens/question"), [ navigate ]);
     const onPlayers = React.useCallback((players: IPlayer[]): void =>
@@ -38,7 +39,7 @@ export function useConnection()
         dispatch(GameReducer.actions.setProgress(progress));
     }, [ dispatch ]);
 
-    const onSelectedQuestion = React.useCallback((selectedQuestion: ISelectedQuestion) =>
+    const onSelectedQuestion = React.useCallback((selectedQuestion: ISelectedQuestion | null) =>
     {
         console.log("Selected", selectedQuestion);
         dispatch(GameReducer.actions.setSelectedQuestion(selectedQuestion));

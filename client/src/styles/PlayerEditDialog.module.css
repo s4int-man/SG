@@ -1,0 +1,119 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(2, 4, 20, 0.72);
+  backdrop-filter: blur(4px);
+}
+
+.dialog {
+  width: min(100%, 360px);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 24px;
+  border-radius: 16px;
+  border: 1px solid var(--border-strong);
+  background: linear-gradient(165deg, rgba(26, 34, 136, 0.96) 0%, rgba(8, 12, 55, 0.98) 100%);
+  box-shadow: var(--shadow);
+  color: var(--gold);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-align: center;
+  color: var(--gold-bright);
+  text-transform: uppercase;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gold-dim);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 20px;
+  font-weight: 700;
+  font-family: var(--font-display);
+  color: #1a1a2e;
+  background: #f7f2dc;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  outline: none;
+}
+
+.input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(232, 217, 138, 0.25);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.save,
+.delete,
+.cancel {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.save {
+  color: var(--bg-deep);
+  background: linear-gradient(180deg, var(--gold-bright) 0%, var(--gold) 100%);
+}
+
+.delete {
+  color: #fff;
+  background: linear-gradient(180deg, #d64545 0%, var(--danger) 100%);
+}
+
+.cancel {
+  color: var(--gold);
+  background: transparent;
+  border: 1px solid var(--border);
+  box-shadow: none;
+}
+
+.cancel:hover {
+  border-color: var(--border-strong);
+}
+
+.confirm_text {
+  text-align: center;
+  font-size: 16px;
+  line-height: 1.4;
+  color: var(--gold);
+}
+
+.confirm_text b {
+  color: var(--gold-bright);
+}
+

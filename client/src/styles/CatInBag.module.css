@@ -1,39 +1,55 @@
-.container
-{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-    gap: 10px;
-    text-align: center;
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 24px;
+  gap: 16px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: clamp(22px, 3vw, 32px);
+  letter-spacing: 0.03em;
 }
 
-.player
-{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid white;
-    padding: 5px;
-    cursor: pointer;
-    font-size: 20px;
-    font-weight: 700;
-    width: 150px;
+.player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  cursor: pointer;
+  font-size: 22px;
+  font-weight: 700;
+  width: min(100%, 220px);
+  background: linear-gradient(165deg, var(--bg-cell-hover) 0%, var(--bg-cell) 100%);
+  color: var(--gold-bright);
+  box-shadow: var(--shadow);
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
 
+.player:hover {
+  transform: translateY(-2px);
+  border-color: var(--gold-bright);
+  background: linear-gradient(165deg, #2430a8 0%, var(--bg-cell-hover) 100%);
 }
 
 .title {
-    font-size: 32px;
-    font-weight: bold;
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 700;
+  color: var(--gold-bright);
 }
 
 .help_message {
-    font-size: 20px;
-    color: #666;
+  font-family: var(--font-body);
+  font-size: 18px;
+  color: var(--gold-dim);
+  max-width: 420px;
 }
 
 .text {
-    font-size: 20px;
+  font-size: 20px;
+  color: var(--gold);
 }
