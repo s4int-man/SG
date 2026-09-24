@@ -31,9 +31,28 @@ export async function saveProgress(body: unknown): Promise<void>
 	}
 }
 
-export async function uploadMedia(kind: "image" | "audio" | "video", file: File): Promise<string>
+export type MediaUploadMeta = {
+	packName: string;
+	round: number;
+	categoryId: number;
+	questionId: number;
+	type: string;
+};
+
+export async function uploadMedia(
+	kind: "image" | "audio" | "video",
+	file: File,
+	meta: MediaUploadMeta,
+): Promise<string>
 {
-	const qs = new URLSearchParams({ filename: file.name || `file` });
+	const qs = new URLSearchParams({
+		filename: file.name || "file",
+		pack: meta.packName || "pack",
+		round: String(meta.round),
+		categoryId: String(meta.categoryId),
+		questionId: String(meta.questionId),
+		type: meta.type,
+	});
 	const res = await fetch(`${EDITOR_API_BASE}/api/media/${kind}?${qs}`, {
 		method: "POST",
 		headers: {
@@ -60,7 +79,7 @@ export function isBrowserLocalhost(): boolean
 
 const PROGRESS_QUESTION_KEYS = new Set(["completed", "answerPlayer"]);
 
-export function toCleanPack(doc: { rounds?: unknown }): { rounds: unknown }
+export function toCleanPack(doc: { name?: unknown; rounds?: unknown }): { name?: string; rounds: unknown }
 {
 	const rounds = Array.isArray(doc.rounds)
 		? doc.rounds.map((round: unknown) =>
@@ -86,7 +105,22 @@ export function toCleanPack(doc: { rounds?: unknown }): { rounds: unknown }
 		})
 		: [];
 
-	return { rounds };
+	const result: { name?: string; rounds: unknown } = { rounds };
+	if (typeof doc.name === "string" && doc.name.trim() !== "")
+		result.name = doc.name.trim();
+	return result;
+}
+
+export function slugPackName(name: string): string
+{
+	const cleaned = name
+		.trim()
+		.replace(/[<>:"/\\|?*\x00-\x1f]+/g, "")
+		.replace(/\s+/g, "-")
+		.replace(/-+/g, "-")
+		.replace(/^\.+|\.+$/g, "")
+		.slice(0, 80);
+	return cleaned || "pack";
 }
 
 export function downloadJson(filename: string, data: unknown): void

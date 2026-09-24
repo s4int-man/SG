@@ -1,7 +1,6 @@
 import express from 'express';
 import { createServer } from "node:http";
 import { Server } from "socket.io";
-import { randomBytes } from "node:crypto";
 import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { loadPlayers, loadProgress, loadSettings, savePlayers, saveProgress, saveSettings } from "./progressUtils.mjs";
@@ -335,6 +334,29 @@ const MEDIA_KINDS = {
     video: { dir: "editor/video", accept: /^video\//, fallbackExt: ".mp4" },
 };
 
+function sanitizePackName(name)
+{
+    const cleaned = String(name || "")
+        .trim()
+        .replace(/[<>:"/\\|?*\x00-\x1f]+/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^\.+|\.+$/g, "")
+        .slice(0, 80);
+    return cleaned || "pack";
+}
+
+function sanitizeToken(value, fallback)
+{
+    const cleaned = String(value ?? "")
+        .trim()
+        .replace(/[<>:"/\\|?*\s\x00-\x1f]+/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^\.+|\.+$/g, "")
+        .slice(0, 64);
+    return cleaned || fallback;
+}
+
 app.get("/api/progress", requireLocalhost, (_req, res) =>
 {
     res.json(progress);
@@ -386,7 +408,12 @@ app.post(
         if (!ext || ext.length > 8)
             ext = kind.fallbackExt;
 
-        const fileName = `${Date.now()}-${randomBytes(4).toString("hex")}${ext}`;
+        const pack = sanitizePackName(req.query.pack);
+        const round = sanitizeToken(req.query.round, "0");
+        const categoryId = sanitizeToken(req.query.categoryId, "0");
+        const questionId = sanitizeToken(req.query.questionId, "0");
+        const type = sanitizeToken(req.query.type, req.params.kind);
+        const fileName = `${pack}-${round}-${categoryId}-${questionId}-${type}${ext}`;
         const dirPath = path.join("public", kind.dir);
         mkdirSync(dirPath, { recursive: true });
         writeFileSync(path.join(dirPath, fileName), req.body);

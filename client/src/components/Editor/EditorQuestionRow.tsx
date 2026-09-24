@@ -5,6 +5,9 @@ import styles from "../../styles/Editor.module.css";
 
 type Props = {
 	question: IQuestion;
+	packName: string;
+	roundIndex: number;
+	categoryIndex: number;
 	onChange: (next: IQuestion) => void;
 };
 
@@ -34,8 +37,13 @@ function mediaFlags(q: IQuestion): string
 function MediaSlot(props: {
 	label: string;
 	kind: MediaKind;
+	field: MediaField;
 	accept: string;
 	path: string | undefined;
+	packName: string;
+	roundIndex: number;
+	categoryIndex: number;
+	questionId: number;
 	onUploaded: (path: string) => void;
 })
 {
@@ -46,19 +54,36 @@ function MediaSlot(props: {
 
 	const openPicker = () =>
 	{
-		if (!uploading)
-			inputRef.current?.click();
+		if (uploading)
+			return;
+		if (props.packName.trim() === "")
+		{
+			setError("Сначала укажи название пака");
+			return;
+		}
+		inputRef.current?.click();
 	};
 
 	const onFile = async (file: File | undefined) =>
 	{
 		if (file == null)
 			return;
+		if (props.packName.trim() === "")
+		{
+			setError("Сначала укажи название пака");
+			return;
+		}
 		setUploading(true);
 		setError(null);
 		try
 		{
-			const path = await uploadMedia(props.kind, file);
+			const path = await uploadMedia(props.kind, file, {
+				packName: props.packName,
+				round: props.roundIndex,
+				categoryId: props.categoryIndex,
+				questionId: props.questionId,
+				type: props.field,
+			});
 			props.onUploaded(path);
 		}
 		catch (e)
@@ -210,8 +235,13 @@ export function EditorQuestionRow(props: Props)
 						key={slot.field}
 						label={slot.label}
 						kind={slot.kind}
+						field={slot.field}
 						accept={slot.accept}
 						path={q[slot.field]}
+						packName={props.packName}
+						roundIndex={props.roundIndex}
+						categoryIndex={props.categoryIndex}
+						questionId={q.id}
 						onUploaded={path => set(slot.field, path)}
 					/>
 				)}
