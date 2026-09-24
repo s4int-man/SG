@@ -27,6 +27,13 @@ import { readFileSync, writeFileSync } from "node:fs";
 
 const progressFile = "progress.json";
 const playersFile = "players.json";
+const settingsFile = "settings.json";
+
+const defaultSettings = {
+    answerTimeLimitSec: 30,
+    answerQueueEnabled: true,
+    answerCooldownSec: 5,
+};
 
 export function loadProgress()
 {
@@ -46,7 +53,7 @@ export function loadPlayers()
 
 export function saveProgress(progress)
 {
-    var json = JSON.stringify(progress);
+    var json = JSON.stringify(progress, null, 4);
     writeFileSync(progressFile, json, 'utf8');
 }
 
@@ -54,4 +61,35 @@ export function savePlayers(players)
 {
     var json = JSON.stringify(players);
     writeFileSync(playersFile, json, 'utf8');
+}
+export function loadSettings()
+{
+    console.log("load settings from", settingsFile);
+    try
+    {
+        const raw = JSON.parse(readFileSync(settingsFile, "utf8"));
+        return {
+            answerTimeLimitSec: Number(raw.answerTimeLimitSec) || defaultSettings.answerTimeLimitSec,
+            answerQueueEnabled: raw.answerQueueEnabled !== false,
+            answerCooldownSec: Math.max(0, Number.isFinite(Number(raw.answerCooldownSec)) ? Number(raw.answerCooldownSec) : defaultSettings.answerCooldownSec),
+        };
+    }
+    catch (e)
+    {
+        console.log("settings missing, using defaults");
+        saveSettings(defaultSettings);
+        return { ...defaultSettings };
+    }
+}
+
+export function saveSettings(settings)
+{
+    const cool = Number(settings.answerCooldownSec);
+    const next = {
+        answerTimeLimitSec: Math.max(5, Math.min(300, Math.round(Number(settings.answerTimeLimitSec) || defaultSettings.answerTimeLimitSec))),
+        answerQueueEnabled: settings.answerQueueEnabled !== false,
+        answerCooldownSec: Math.max(0, Math.min(60, Math.round(Number.isFinite(cool) ? cool : defaultSettings.answerCooldownSec))),
+    };
+    writeFileSync(settingsFile, JSON.stringify(next, null, 2), "utf8");
+    return next;
 }

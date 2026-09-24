@@ -12,6 +12,11 @@ interface IGameState
 	selectedQuestion: ISelectedQuestion | null;
 	answerPlayer: IPlayer | null;
 	answerQueue: string[];
+	passedPlayers: string[];
+	answerTimeLimit: number;
+	answerTimer: number | null;
+	answerQueueEnabled: boolean;
+	answerCooldown: number;
 	leaderPlayer?: string;
 	catInBagSelected: boolean;
 }
@@ -24,6 +29,11 @@ const initialState: IGameState = {
 	currentQuestion: null,
 	answerPlayer: null,
 	answerQueue: [],
+	passedPlayers: [],
+	answerTimeLimit: 30,
+	answerTimer: null,
+	answerQueueEnabled: true,
+	answerCooldown: 5,
 	leaderPlayer: undefined,
 	catInBagSelected: false,
 };
@@ -71,6 +81,31 @@ function setAnswerQueue(state: IGameState, action: PayloadAction<string[]>): voi
 	state.answerQueue = action.payload;
 }
 
+function setPassedPlayers(state: IGameState, action: PayloadAction<string[]>): void
+{
+	state.passedPlayers = action.payload;
+}
+
+function setAnswerTimeLimit(state: IGameState, action: PayloadAction<number>): void
+{
+	state.answerTimeLimit = action.payload;
+}
+
+function setAnswerTimer(state: IGameState, action: PayloadAction<number | null>): void
+{
+	state.answerTimer = action.payload;
+}
+
+function setGameSettings(state: IGameState, action: PayloadAction<{ answerTimeLimitSec?: number; answerQueueEnabled?: boolean; answerCooldownSec?: number }>): void
+{
+	if (action.payload.answerTimeLimitSec != null)
+		state.answerTimeLimit = action.payload.answerTimeLimitSec;
+	if (action.payload.answerQueueEnabled != null)
+		state.answerQueueEnabled = action.payload.answerQueueEnabled;
+	if (action.payload.answerCooldownSec != null)
+		state.answerCooldown = action.payload.answerCooldownSec;
+}
+
 function setLeaderPlayer(state: IGameState, action: PayloadAction<string | undefined>): void
 {
 	state.leaderPlayer = action.payload;
@@ -91,6 +126,10 @@ export const GameReducer = createSlice({
 		setCurrentQuestion,
 		setAnswerPlayer,
 		setAnswerQueue,
+		setPassedPlayers,
+		setAnswerTimeLimit,
+		setAnswerTimer,
+		setGameSettings,
 		setCurrentRound,
 		setLeaderPlayer,
 		setCatInBagSelected,

@@ -1,7 +1,7 @@
 import express from 'express';
 import { createServer } from "node:http";
 import { Server } from "socket.io";
-import { loadPlayers, loadProgress, savePlayers, saveProgress } from "./progressUtils.mjs";
+import { loadPlayers, loadProgress, loadSettings, savePlayers, saveProgress, saveSettings } from "./progressUtils.mjs";
 
 const hostname = "localhost";
 const port = 4000;
@@ -11,13 +11,35 @@ const QUESTION_SELECT_HIGHLIGHT_MS = 2000;
 
 let progress = loadProgress();
 let players = loadPlayers();
+let settings = loadSettings();
 let answerPlayer = null;
 let answerQueue = [];
+let passedPlayers = [];
+let answerTimer = null;
+let answerTickInterval = null;
+let answerDeadline = null;
+let answerTimeLimitSec = settings.answerTimeLimitSec;
 let currentQuestion = null;
 let currentRound = findCurrentRound();
 let isOpened = false;
-let leaderPlayer = undefined;
+let leaderPlayer = progress.leaderPlayer || undefined;
 let catInBagSelected = false;
+
+function persistLeaderPlayer(name)
+{
+    leaderPlayer = name || undefined;
+    if (leaderPlayer)
+        progress.leaderPlayer = leaderPlayer;
+    else
+        delete progress.leaderPlayer;
+    saveProgress(progress);
+}
+
+function setLeaderPlayer(name, ioServer)
+{
+    persistLeaderPlayer(name);
+    ioServer.sockets.emit("leaderPlayer", leaderPlayer);
+}
 
 let roundId = 0;
 let category = "";
@@ -97,17 +119,167 @@ function findCurrentRound()
 }
 
 
+function clearAnswerTimer()
+{
+    if (answerTimer != null)
+    {
+        clearTimeout(answerTimer);
+        answerTimer = null;
+    }
+
+    if (answerTickInterval != null)
+    {
+        clearInterval(answerTickInterval);
+        answerTickInterval = null;
+    }
+
+    answerDeadline = null;
+}
+
+function emitAnswerTimer(ioServer, secondsLeft)
+{
+    ioServer.sockets.emit("answerTimer", secondsLeft);
+}
+
+function emitAnswerTimeLimit(ioServer)
+{
+    ioServer.sockets.emit("answerTimeLimit", answerTimeLimitSec);
+}
+
+function emitGameSettings(ioServer)
+{
+    ioServer.sockets.emit("gameSettings", {
+        answerTimeLimitSec,
+        answerQueueEnabled: settings.answerQueueEnabled,
+        answerCooldownSec: settings.answerCooldownSec,
+    });
+}
+
+function applySettings(next, ioServer)
+{
+    settings = saveSettings({
+        answerTimeLimitSec: next.answerTimeLimitSec ?? answerTimeLimitSec,
+        answerQueueEnabled: next.answerQueueEnabled ?? settings.answerQueueEnabled,
+        answerCooldownSec: next.answerCooldownSec ?? settings.answerCooldownSec,
+    });
+    answerTimeLimitSec = settings.answerTimeLimitSec;
+
+    if (!settings.answerQueueEnabled && answerQueue.length > 1)
+    {
+        answerQueue = answerQueue.slice(0, 1);
+        syncAnswerState(ioServer);
+    }
+
+    emitGameSettings(ioServer);
+    emitAnswerTimeLimit(ioServer);
+
+    if (answerPlayer != null && !isOpened)
+        startAnswerTimer(ioServer);
+
+    console.log("settings", settings);
+}
+
+function startAnswerTimer(ioServer)
+{
+    clearAnswerTimer();
+
+    if (answerPlayer == null || isOpened || currentQuestion == null)
+    {
+        emitAnswerTimer(ioServer, null);
+        return;
+    }
+
+    answerDeadline = Date.now() + answerTimeLimitSec * 1000;
+
+    const tick = () =>
+    {
+        if (answerDeadline == null)
+        {
+            emitAnswerTimer(ioServer, null);
+            return;
+        }
+
+        const left = Math.max(0, Math.ceil((answerDeadline - Date.now()) / 1000));
+        emitAnswerTimer(ioServer, left);
+    };
+
+    tick();
+    answerTickInterval = setInterval(tick, 1000);
+
+    answerTimer = setTimeout(() =>
+    {
+        answerTimer = null;
+        if (answerTickInterval != null)
+        {
+            clearInterval(answerTickInterval);
+            answerTickInterval = null;
+        }
+        emitAnswerTimer(ioServer, 0);
+        console.log("answer timeout", answerPlayer);
+        if (markAnswerWrong != null)
+            markAnswerWrong(true);
+    }, answerTimeLimitSec * 1000);
+}
+
 function syncAnswerState(io)
 {
+    const previousAnswerPlayer = answerPlayer;
     answerPlayer = answerQueue.length > 0 ? answerQueue[0] : null;
     io.sockets.emit("answerPlayer", answerPlayer);
     io.sockets.emit("answerQueue", answerQueue);
+
+    if (answerPlayer == null)
+    {
+        clearAnswerTimer();
+        emitAnswerTimer(io, null);
+    }
+    else if (answerPlayer !== previousAnswerPlayer)
+    {
+        startAnswerTimer(io);
+    }
+}
+
+function syncPassedState(io)
+{
+    io.sockets.emit("passedPlayers", passedPlayers);
 }
 
 function clearAnswerQueue(io)
 {
     answerQueue = [];
     syncAnswerState(io);
+}
+
+function clearPassedPlayers(io)
+{
+    passedPlayers = [];
+    syncPassedState(io);
+}
+
+function getEligiblePlayers()
+{
+    return players.filter(p => p.name !== EMCEE && p.name !== TV && p.online);
+}
+
+/** Set inside connection so timeout can reuse wrong/close logic. */
+let markAnswerWrong = null;
+
+function tryAutoOpenIfAllPassed(ioServer)
+{
+    if (isOpened || currentQuestion == null)
+        return;
+
+    const eligible = getEligiblePlayers();
+    if (eligible.length === 0)
+        return;
+
+    if (!eligible.every(p => passedPlayers.includes(p.name)))
+        return;
+
+    console.log("all players passed, opening answer");
+    isOpened = true;
+    clearAnswerQueue(ioServer);
+    ioServer.sockets.emit("openAnswer");
 }
 
 const app = express();
@@ -128,6 +300,12 @@ const io = new Server(httpServer, {
 io.on("connection", (socket) => {
     let socketName = null;
 
+    socket.onAny((event, ...args) =>
+    {
+        const who = socketName ?? socket.id;
+        console.log("[in]", who, event, ...args);
+    });
+
     function isAdmin()
     {
         return socketName === EMCEE;
@@ -138,7 +316,7 @@ io.on("connection", (socket) => {
         currentRound++;
         console.log("currentRound", currentRound);
         io.sockets.emit("currentRound", currentRound);
-        io.sockets.emit("leaderPlayer");
+        setLeaderPlayer(undefined, io);
     }
 
     function closeQuestion()
@@ -154,10 +332,40 @@ io.on("connection", (socket) => {
 
         currentQuestion = null;
         clearAnswerQueue(io);
+        clearPassedPlayers(io);
 
         if (roundFinished(currentRound))
             sendNextRound();
     }
+
+    markAnswerWrong = (fromTimeout = false) =>
+    {
+        if (answerPlayer == null || currentQuestion == null)
+            return;
+
+        io.sockets.emit("audioPlay");
+        console.log(fromTimeout ? "wrong(timeout)" : "wrong", answerPlayer, currentQuestion);
+
+        const player = players.find(p => p.name == answerPlayer);
+        if (player != null)
+        {
+            player.score -= currentQuestion.price;
+            savePlayers(players);
+            io.sockets.emit("players", players);
+        }
+
+        if (catInBagSelected)
+        {
+            setLeaderPlayer(answerPlayer, io);
+            closeQuestion();
+            return;
+        }
+
+        if (answerQueue.length > 0)
+            answerQueue.shift();
+        syncAnswerState(io);
+        tryAutoOpenIfAllPassed(io);
+    };
 
     socket.on("login", (name) =>
     {
@@ -170,6 +378,9 @@ io.on("connection", (socket) => {
         socket.emit("progress", progress);
         socket.emit("currentRound", currentRound);
         socket.emit("leaderPlayer", leaderPlayer);
+        emitAnswerTimeLimit(io);
+        emitGameSettings(io);
+        socket.emit("answerTimer", answerDeadline == null ? null : Math.max(0, Math.ceil((answerDeadline - Date.now()) / 1000)));
         io.sockets.emit("players", players);
 
         if (currentQuestion == null)
@@ -180,6 +391,10 @@ io.on("connection", (socket) => {
             socket.emit("to_question");
 
             syncAnswerState(io);
+            syncPassedState(io);
+            emitAnswerTimeLimit(io);
+            emitGameSettings(io);
+            socket.emit("answerTimer", answerDeadline == null ? null : Math.max(0, Math.ceil((answerDeadline - Date.now()) / 1000)));
         }
 
         socket.once("disconnect", () =>
@@ -206,14 +421,14 @@ io.on("connection", (socket) => {
     {
         isOpened = false;
         clearAnswerQueue(io);
+        clearPassedPlayers(io);
         roundId = _roundId;
         category = _category;
         questionId = _questionId;
-        leaderPlayer = _leaderPlayer;
+        setLeaderPlayer(_leaderPlayer, io);
 
         console.log("question", roundId, category, questionId);
         io.sockets.emit("selected", { roundId, category, questionId });
-        io.sockets.emit("leaderPlayer", leaderPlayer);
 
         currentQuestion = findQuestion(roundId, category, questionId);
 
@@ -231,9 +446,21 @@ io.on("connection", (socket) => {
         if (name == null || name === EMCEE || name === TV)
             return;
 
+        if (passedPlayers.includes(name))
+        {
+            console.log("already passed", name);
+            return;
+        }
+
         if (answerQueue.includes(name))
         {
             console.log("already in answer queue", name);
+            return;
+        }
+
+        if (!settings.answerQueueEnabled && answerQueue.length > 0)
+        {
+            console.log("answer queue disabled, ignore", name);
             return;
         }
 
@@ -250,9 +477,10 @@ io.on("connection", (socket) => {
     socket.on("catInBagPlayer", (playerName) =>
     {
         clearAnswerQueue(io);
+        clearPassedPlayers(io);
         console.log("catInBagPlayer", roundId, category, questionId, playerName);
         io.sockets.emit("selected", { roundId, category, questionId });
-        io.sockets.emit("leaderPlayer", playerName);
+        setLeaderPlayer(playerName, io);
         catInBagSelected = true;
         io.sockets.emit("catInBagSelected", catInBagSelected);
 
@@ -261,10 +489,42 @@ io.on("connection", (socket) => {
         io.sockets.emit("question", currentQuestion);
     });
 
+    socket.on("passQuestion", (name) =>
+    {
+        if (isOpened)
+            return;
+
+        if (name == null || name === EMCEE || name === TV)
+            return;
+
+        if (passedPlayers.includes(name))
+            return;
+
+        passedPlayers.push(name);
+        console.log("passQuestion", name, passedPlayers);
+
+        if (answerQueue.includes(name))
+        {
+            answerQueue = answerQueue.filter(n => n !== name);
+            syncAnswerState(io);
+        }
+
+        syncPassedState(io);
+        tryAutoOpenIfAllPassed(io);
+    });
+
     socket.on("openAnswer", () =>
     {
-        io.sockets.emit("openAnswer");
+        if (isOpened)
+        {
+            console.log("openAnswer ignored: already opened");
+            return;
+        }
+
+        clearAnswerTimer();
+        emitAnswerTimer(io, null);
         isOpened = true;
+        io.sockets.emit("openAnswer");
     });
 
     socket.on("right", () =>
@@ -278,39 +538,36 @@ io.on("connection", (socket) => {
         savePlayers(players);
         io.sockets.emit("players", players);
 
-        leaderPlayer = answerPlayer;
-        io.sockets.emit("leaderPlayer", leaderPlayer);
+        setLeaderPlayer(answerPlayer, io);
 
         closeQuestion();
     });
 
     socket.on("wrong", () =>
     {
-        socket.broadcast.emit("audioPlay");
-        console.log("wrong", answerPlayer, currentQuestion);
+        markAnswerWrong(false);
+    });
 
-        // списываем баллы
-        //TODO Списываем баллы и ждем следующего
-        const player = players.find(p => p.name == answerPlayer);
-        if (player != null)
+    socket.on("setAnswerTimeLimit", (seconds) =>
+    {
+        if (!isAdmin())
         {
-            player.score -= currentQuestion.price;
-            savePlayers(players);
-            io.sockets.emit("players", players);
-        }
-
-        if (catInBagSelected)
-        {
-            leaderPlayer = answerPlayer;
-            io.sockets.emit("leaderPlayer", leaderPlayer);
-            closeQuestion();
+            console.log("setAnswerTimeLimit ignored: not admin", socketName);
             return;
         }
 
-        // remove current answerer, promote next in queue
-        if (answerQueue.length > 0)
-            answerQueue.shift();
-        syncAnswerState(io);
+        applySettings({ answerTimeLimitSec: seconds }, io);
+    });
+
+    socket.on("setGameSettings", (next) =>
+    {
+        if (!isAdmin())
+        {
+            console.log("setGameSettings ignored: not admin", socketName);
+            return;
+        }
+
+        applySettings(next ?? {}, io);
     });
 
     socket.on("audioPlay", () => {
@@ -374,15 +631,19 @@ io.on("connection", (socket) => {
             syncAnswerState(io);
         }
 
-        if (leaderPlayer === playerName)
+        if (passedPlayers.includes(playerName))
         {
-            leaderPlayer = undefined;
-            io.sockets.emit("leaderPlayer", leaderPlayer);
+            passedPlayers = passedPlayers.filter(n => n !== playerName);
+            syncPassedState(io);
         }
+
+        if (leaderPlayer === playerName)
+            setLeaderPlayer(undefined, io);
 
         savePlayers(players);
         io.sockets.emit("players", players);
         console.log("deletePlayer", playerName);
+        tryAutoOpenIfAllPassed(io);
     });
 
     socket.on("renamePlayer", (newName) =>
@@ -424,13 +685,15 @@ io.on("connection", (socket) => {
         socketName = nextName;
 
         answerQueue = answerQueue.map(n => n === oldName ? nextName : n);
+        passedPlayers = passedPlayers.map(n => n === oldName ? nextName : n);
         if (answerPlayer === oldName)
             answerPlayer = nextName;
         if (leaderPlayer === oldName)
-            leaderPlayer = nextName;
+            persistLeaderPlayer(nextName);
 
         savePlayers(players);
         syncAnswerState(io);
+        syncPassedState(io);
         io.sockets.emit("players", players);
         io.sockets.emit("leaderPlayer", leaderPlayer);
         socket.emit("renamed", nextName);

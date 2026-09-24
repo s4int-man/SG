@@ -14,23 +14,31 @@ import { TextAnswer } from "./TextAnswer";
 
 export function PlayerQuestion(props: IQuestion)
 {
-    const [ answerOpened, setAnswerOpened ] = useState(false);
-    const [ secondsToAnswer, setSecondsToAnswer ] = useState<number>(5);
-
     const leaderPlayer = useSelector((state: RootState) => state.gameReducer.leaderPlayer);
     const answerQueue = useSelector((state: RootState) => state.gameReducer.answerQueue);
+    const passedPlayers = useSelector((state: RootState) => state.gameReducer.passedPlayers);
+    const answerPlayer = useSelector((state: RootState) => state.gameReducer.answerPlayer);
+    const answerQueueEnabled = useSelector((state: RootState) => state.gameReducer.answerQueueEnabled);
+    const answerCooldown = useSelector((state: RootState) => state.gameReducer.answerCooldown);
     const catInBagSelected = useSelector((state: RootState) => state.gameReducer.catInBagSelected);
+
+    const [ answerOpened, setAnswerOpened ] = useState(false);
+    const [ secondsToAnswer, setSecondsToAnswer ] = useState<number>(answerCooldown);
 
     const timeout = useRef<NodeJS.Timeout | null>(null);
 
     const myName = localStorage.getItem("name") || "";
     const inQueue = answerQueue.includes(myName);
+    const hasPassed = passedPlayers.includes(myName);
+    const someoneAnswering = answerPlayer != null && answerPlayer.name !== myName;
+    const canJoinQueue = answerQueueEnabled || !someoneAnswering;
+    const buttonsLocked = secondsToAnswer > 0 && !props.catInBag;
 
     const isImageAnswer = props.answerImage != null;
 
-    const onClick = () =>
+    const onAnswer = () =>
     {
-        if (secondsToAnswer > 0 && !props.catInBag)
+        if (buttonsLocked)
         {
             if (timeout.current != null)
                 clearTimeout(timeout.current);
@@ -39,23 +47,35 @@ export function PlayerQuestion(props: IQuestion)
             return;
         }
 
-        if (inQueue)
+        if (inQueue || hasPassed)
             return;
 
         socket.emit("answerPlayer", myName);
     };
 
-    const openAnswer = () =>
+    const onPass = () =>
+    {
+        if (hasPassed)
+            return;
+
+        socket.emit("passQuestion", myName);
+    };
+
+    const onOpenAnswer = React.useCallback(() =>
     {
         setAnswerOpened(true);
-    };
+    }, []);
 
     React.useEffect(() =>
     {
-        socket.on("openAnswer", openAnswer);
+        socket.on("openAnswer", onOpenAnswer);
+        return () => void socket.off("openAnswer", onOpenAnswer);
+    }, [ onOpenAnswer ]);
 
-        return () => void socket.off("openAnswer", openAnswer);
-    });
+    React.useEffect(() =>
+    {
+        setSecondsToAnswer(answerCooldown);
+    }, [ props.id, answerCooldown ]);
 
     React.useEffect((): void =>
     {
@@ -70,7 +90,7 @@ export function PlayerQuestion(props: IQuestion)
         {
             setSecondsToAnswer(prev => prev - 1);
         }, 1000);
-    }, [ props, secondsToAnswer ]);
+    }, [ props.catInBag, secondsToAnswer ]);
 
     if (props.catInBag && !catInBagSelected && !answerOpened)
     {
@@ -84,7 +104,7 @@ export function PlayerQuestion(props: IQuestion)
         return <CatInBagPlayerAnswered />;
 
     if (props.catInBag && !answerOpened)
-        onClick();
+        onAnswer();
 
     return <React.Fragment>
         <div className={styles.question}>
@@ -96,14 +116,29 @@ export function PlayerQuestion(props: IQuestion)
             {answerOpened && isImageAnswer && <ImageAnswer answer={props.answerImage!} />}
             {answerOpened && <TextAnswer answer={props.answer} />}
             <AnswerStatus myName={myName} />
-            {!answerOpened && !inQueue && (
-                <button
-                    data-disabled={String(secondsToAnswer > 0)}
-                    className={styles.answer_button}
-                    onClick={onClick}
-                >
-                    {secondsToAnswer > 0 ? secondsToAnswer : "Ответить"}
-                </button>
+            {hasPassed && !answerOpened && (
+                <div className={styles.passed_label}>Ты пасанул</div>
+            )}
+            {!answerOpened && !hasPassed && !props.catInBag && (
+                <div className={styles.player_actions}>
+                    {!inQueue && canJoinQueue && (
+                        <button
+                            type="button"
+                            data-disabled={String(buttonsLocked)}
+                            className={styles.answer_button}
+                            onClick={onAnswer}
+                        >
+                            {buttonsLocked ? secondsToAnswer : "Ответить"}
+                        </button>
+                    )}
+                    <button
+                        type="button"
+                        className={styles.pass_button}
+                        onClick={onPass}
+                    >
+                        Пас
+                    </button>
+                </div>
             )}
         </div>
     </React.Fragment>;

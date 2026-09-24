@@ -1,0 +1,5 @@
+{
+  "answerTimeLimitSec": 30,
+  "answerQueueEnabled": true,
+  "answerCooldownSec": 5
+}

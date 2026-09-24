@@ -2,6 +2,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "../types/RootState";
 import styles from "../styles/Header.module.css";
 import config from "../config.json";
+import React from "react";
+import { AdminControlsDialog } from "./AdminControlsDialog";
 
 export function Header()
 {
@@ -9,6 +11,7 @@ export function Header()
     const myPlayer = useSelector((state: RootState) => state.gameReducer.players.find(p => p.name === name));
     const isAdmin = name === config.emcee;
     const isTv = name === config.tv;
+    const [ controlsOpen, setControlsOpen ] = React.useState(false);
 
     if (!name)
         return null;
@@ -17,26 +20,26 @@ export function Header()
     if (myPlayer == null && !isAdmin && !isTv)
         return null;
 
-    const onAdminControls = () =>
-    {
-        // TODO: admin controls action
-    };
-
-    return <div className={styles.header}>
-        <div className={styles.title}>Святая игра</div>
-        {isAdmin && (
-            <button
-                type="button"
-                className={styles.admin_button}
-                onClick={onAdminControls}
-            >
-                Управление
-            </button>
+    return <React.Fragment>
+        <div className={styles.header}>
+            <div className={styles.title}>Святая игра</div>
+            {isAdmin && (
+                <button
+                    type="button"
+                    className={styles.admin_button}
+                    onClick={() => setControlsOpen(true)}
+                >
+                    Управление
+                </button>
+            )}
+            {!isAdmin && !isTv && myPlayer != null &&
+                <div className={styles.player_info}>
+                    <div className={styles.name}>{myPlayer.name}:</div>
+                    <div className={styles.score}>{myPlayer.score} очков</div>
+            </div>}
+        </div>
+        {controlsOpen && (
+            <AdminControlsDialog onClose={() => setControlsOpen(false)} />
         )}
-        {!isAdmin && !isTv && myPlayer != null &&
-            <div className={styles.player_info}>
-                <div className={styles.name}>{myPlayer.name}:</div>
-                <div className={styles.score}>{myPlayer.score} очков</div>
-        </div>}
-    </div>;
+    </React.Fragment>;
 }

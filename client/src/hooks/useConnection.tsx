@@ -25,6 +25,8 @@ export function useConnection()
         dispatch(GameReducer.actions.setSelectedQuestion(null));
         dispatch(GameReducer.actions.setAnswerQueue([]));
         dispatch(GameReducer.actions.setAnswerPlayer(null));
+        dispatch(GameReducer.actions.setPassedPlayers([]));
+        dispatch(GameReducer.actions.setAnswerTimer(null));
     }, [ navigate, dispatch ]);
     const onToQuestion = React.useCallback(() => navigate("/screens/question"), [ navigate ]);
     const onPlayers = React.useCallback((players: IPlayer[]): void =>
@@ -64,6 +66,28 @@ export function useConnection()
         dispatch(GameReducer.actions.setAnswerQueue(answerQueue ?? []));
     }, [ dispatch ]);
 
+    const onPassedPlayers = React.useCallback((passedPlayers: string[]): void =>
+    {
+        dispatch(GameReducer.actions.setPassedPlayers(passedPlayers ?? []));
+    }, [ dispatch ]);
+
+    const onAnswerTimeLimit = React.useCallback((seconds: number): void =>
+    {
+        dispatch(GameReducer.actions.setAnswerTimeLimit(Number(seconds) || 30));
+    }, [ dispatch ]);
+
+    const onAnswerTimer = React.useCallback((secondsLeft: number | null): void =>
+    {
+        dispatch(GameReducer.actions.setAnswerTimer(secondsLeft));
+    }, [ dispatch ]);
+
+    const onGameSettings = React.useCallback((next: { answerTimeLimitSec?: number; answerQueueEnabled?: boolean; answerCooldownSec?: number }): void =>
+    {
+        dispatch(GameReducer.actions.setGameSettings(next ?? {}));
+        if (next?.answerTimeLimitSec != null)
+            dispatch(GameReducer.actions.setAnswerTimeLimit(Number(next.answerTimeLimitSec) || 30));
+    }, [ dispatch ]);
+
     const onCurrentRound = React.useCallback((currentRound: number): void =>
     {
         console.log("currentRound", currentRound);
@@ -92,6 +116,10 @@ export function useConnection()
         socket.on("question", onQuestion);
         socket.on("answerPlayer", onAnswerPlayer);
         socket.on("answerQueue", onAnswerQueue);
+        socket.on("passedPlayers", onPassedPlayers);
+        socket.on("answerTimeLimit", onAnswerTimeLimit);
+        socket.on("answerTimer", onAnswerTimer);
+        socket.on("gameSettings", onGameSettings);
         socket.on("currentRound", onCurrentRound);
         socket.on("leaderPlayer", onLeaderPlayer);
         socket.on("catInBagSelected", onCatInBagSelected);
@@ -108,9 +136,13 @@ export function useConnection()
             socket.off("question", onQuestion);
             socket.off("answerPlayer", onAnswerPlayer);
             socket.off("answerQueue", onAnswerQueue);
+            socket.off("passedPlayers", onPassedPlayers);
+            socket.off("answerTimeLimit", onAnswerTimeLimit);
+            socket.off("answerTimer", onAnswerTimer);
+            socket.off("gameSettings", onGameSettings);
             socket.off("currentRound", onCurrentRound);
             socket.off("leaderPlayer", onLeaderPlayer);
             socket.off("catInBagSelected", onCatInBagSelected);
         }
-    }, [ onConnect, onToGame, onToQuestion, onPlayers, onProgress, onSelectedQuestion, onQuestion, onAnswerPlayer, onAnswerQueue, onCurrentRound, onLeaderPlayer, onCatInBagSelected ]);
+    }, [ onConnect, onToGame, onToQuestion, onPlayers, onProgress, onSelectedQuestion, onQuestion, onAnswerPlayer, onAnswerQueue, onPassedPlayers, onAnswerTimeLimit, onAnswerTimer, onGameSettings, onCurrentRound, onLeaderPlayer, onCatInBagSelected ]);
 }

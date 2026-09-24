@@ -124,3 +124,26 @@
   color: #ff8a80;
 }
 
+.hint {
+  text-align: center;
+  font-size: 13px;
+  color: var(--gold-dim);
+}
+
+.check_field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--gold);
+  cursor: pointer;
+  user-select: none;
+}
+
+.check_field input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--gold);
+}
+
