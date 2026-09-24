@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { socket } from "../connection/Client";
 import { GameReducer } from "../store/GameReducer";
 import { IGame } from "../types/IGame";
@@ -10,16 +10,24 @@ import { IQuestion, ISelectedQuestion } from "../types/IQuestion";
 export function useConnection()
 {
     const navigate = useNavigate();
+    const location = useLocation();
     const dispatch = useDispatch();
+    const pathRef = React.useRef(location.pathname);
+    pathRef.current = location.pathname;
+
+    const isEditor = () => pathRef.current.startsWith("/editor");
 
     const onConnect = React.useCallback((): void =>
     {
         console.log("Status: connected");
-        navigate("/login");
+        if (!isEditor())
+            navigate("/login");
     }, [ navigate ]);
 
     const onDisconnect = () => console.log("Status: disconnected");
     const onToGame = React.useCallback(() => {
+        if (isEditor())
+            return;
         navigate("/screens/game");
         dispatch(GameReducer.actions.setCurrentQuestion(null));
         dispatch(GameReducer.actions.setSelectedQuestion(null));
@@ -28,7 +36,10 @@ export function useConnection()
         dispatch(GameReducer.actions.setPassedPlayers([]));
         dispatch(GameReducer.actions.setAnswerTimer(null));
     }, [ navigate, dispatch ]);
-    const onToQuestion = React.useCallback(() => navigate("/screens/question"), [ navigate ]);
+    const onToQuestion = React.useCallback(() => {
+        if (!isEditor())
+            navigate("/screens/question");
+    }, [ navigate ]);
     const onPlayers = React.useCallback((players: IPlayer[]): void =>
     {
         console.log("players", players);
@@ -53,7 +64,8 @@ export function useConnection()
     {
         console.log("Move to", question);
         dispatch(GameReducer.actions.setCurrentQuestion(question));
-        navigate("/screens/question");
+        if (!isEditor())
+            navigate("/screens/question");
     }, [ navigate, dispatch ]);
 
     const onAnswerPlayer = React.useCallback((answerPlayer: string | null): void =>

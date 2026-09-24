@@ -6,6 +6,7 @@ import { Game } from './components/Game';
 import { Question } from './components/Question';
 import { Layout } from './components/Layout';
 import { Loading } from './components/Loading';
+import { Editor } from './components/Editor/Editor';
 import styles from "./styles/Root.module.css";
 
 export default function App()
@@ -18,6 +19,7 @@ export default function App()
 		<Routes>
 			<Route path="/" element={<Loading />} />
 			<Route path="/login" element={<LoginRoute />} />
+			<Route path="/editor" element={<Editor />} />
 			<Route path="/screens/" element={<Layout />}>
 				<Route path="game" element={<Game />} />
 				<Route path="question" element={<Question />} />

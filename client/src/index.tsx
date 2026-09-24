@@ -20,9 +20,13 @@ export function setupStore()
 
 const store = setupStore();
 
+const startPath = window.location.pathname.startsWith("/editor")
+	? window.location.pathname
+	: "/";
+
 root.render(
     <Provider store={store}>
-        <MemoryRouter>
+        <MemoryRouter initialEntries={[startPath]}>
             <App />
         </MemoryRouter>
     </Provider>

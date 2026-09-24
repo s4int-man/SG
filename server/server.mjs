@@ -1,6 +1,9 @@
 import express from 'express';
 import { createServer } from "node:http";
 import { Server } from "socket.io";
+import { randomBytes } from "node:crypto";
+import { mkdirSync, writeFileSync } from "node:fs";
+import path from "node:path";
 import { loadPlayers, loadProgress, loadSettings, savePlayers, saveProgress, saveSettings } from "./progressUtils.mjs";
 
 const hostname = "localhost";
@@ -283,6 +286,19 @@ function tryAutoOpenIfAllPassed(ioServer)
 }
 
 const app = express();
+app.use(express.json({ limit: "10mb" }));
+app.use((req, res, next) =>
+{
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET,PUT,POST,OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "*");
+    if (req.method === "OPTIONS")
+    {
+        res.sendStatus(204);
+        return;
+    }
+    next();
+});
 app.use(express.static("public", {
     maxAge: "7d",
     etag: true,
@@ -297,6 +313,87 @@ const io = new Server(httpServer, {
     },
 });
 
+function isLocalRequest(req)
+{
+    const ip = req.socket.remoteAddress;
+    return ip === "127.0.0.1" || ip === "::1" || ip === "::ffff:127.0.0.1";
+}
+
+function requireLocalhost(req, res, next)
+{
+    if (!isLocalRequest(req))
+    {
+        res.status(403).json({ error: "Editor API only available from localhost" });
+        return;
+    }
+    next();
+}
+
+const MEDIA_KINDS = {
+    image: { dir: "editor/images", accept: /^image\//, fallbackExt: ".jpg" },
+    audio: { dir: "editor/audio", accept: /^audio\//, fallbackExt: ".mp3" },
+    video: { dir: "editor/video", accept: /^video\//, fallbackExt: ".mp4" },
+};
+
+app.get("/api/progress", requireLocalhost, (_req, res) =>
+{
+    res.json(progress);
+});
+
+app.put("/api/progress", requireLocalhost, (req, res) =>
+{
+    const body = req.body;
+    if (body == null || !Array.isArray(body.rounds))
+    {
+        res.status(400).json({ error: "Invalid progress: rounds required" });
+        return;
+    }
+
+    progress = body;
+    saveProgress(progress);
+    io.sockets.emit("progress", progress);
+    res.json({ ok: true });
+});
+
+app.post(
+    "/api/media/:kind",
+    requireLocalhost,
+    express.raw({ type: () => true, limit: "80mb" }),
+    (req, res) =>
+    {
+        const kind = MEDIA_KINDS[req.params.kind];
+        if (kind == null)
+        {
+            res.status(400).json({ error: "Unknown media kind" });
+            return;
+        }
+
+        const contentType = String(req.headers["content-type"] || "");
+        if (contentType && !kind.accept.test(contentType))
+        {
+            res.status(400).json({ error: `Expected ${req.params.kind} file` });
+            return;
+        }
+
+        if (!Buffer.isBuffer(req.body) || req.body.length === 0)
+        {
+            res.status(400).json({ error: "Empty body" });
+            return;
+        }
+
+        const original = String(req.query.filename || "");
+        let ext = path.extname(original).toLowerCase();
+        if (!ext || ext.length > 8)
+            ext = kind.fallbackExt;
+
+        const fileName = `${Date.now()}-${randomBytes(4).toString("hex")}${ext}`;
+        const dirPath = path.join("public", kind.dir);
+        mkdirSync(dirPath, { recursive: true });
+        writeFileSync(path.join(dirPath, fileName), req.body);
+
+        res.json({ path: `/${kind.dir}/${fileName}` });
+    }
+);
 io.on("connection", (socket) => {
     let socketName = null;
 
