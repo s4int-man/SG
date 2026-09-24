@@ -2,6 +2,7 @@ import express from 'express';
 import { createServer } from "node:http";
 import { Server } from "socket.io";
 import { mkdirSync, writeFileSync } from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { loadPlayers, loadProgress, loadSettings, savePlayers, saveProgress, saveSettings } from "./progressUtils.mjs";
 
@@ -356,6 +357,47 @@ function sanitizeToken(value, fallback)
         .slice(0, 64);
     return cleaned || fallback;
 }
+
+function lanAddressScore(ip)
+{
+    if (ip.startsWith("192.168."))
+        return 0;
+    if (ip.startsWith("10."))
+        return 1;
+    if (/^172\.(1[6-9]|2\d|3[0-1])\./.test(ip))
+        return 2;
+    return 3;
+}
+
+function getLanAddresses()
+{
+    const nets = os.networkInterfaces();
+    const addresses = [];
+
+    for (const entries of Object.values(nets))
+    {
+        for (const net of entries || [])
+        {
+            const family = net.family;
+            const isV4 = family === "IPv4" || family === 4;
+            if (!isV4 || net.internal)
+                continue;
+            addresses.push(net.address);
+        }
+    }
+
+    addresses.sort((a, b) => lanAddressScore(a) - lanAddressScore(b));
+    return [ ...new Set(addresses) ];
+}
+
+app.get("/api/lan", (_req, res) =>
+{
+    const addresses = getLanAddresses();
+    res.json({
+        addresses,
+        preferred: addresses[0] || null,
+    });
+});
 
 app.get("/api/progress", requireLocalhost, (_req, res) =>
 {

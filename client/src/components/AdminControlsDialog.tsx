@@ -1,8 +1,17 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import { QRCodeSVG } from "qrcode.react";
 import { socket } from "../connection/Client";
+import config from "../config.json";
 import styles from "../styles/PlayerEditDialog.module.css";
 import { RootState } from "../types/RootState";
+
+const CLIENT_PORT = 3000;
+
+function clientJoinUrl(host: string): string
+{
+    return `http://${host}:${CLIENT_PORT}`;
+}
 
 export function AdminControlsDialog(props: { onClose: () => void })
 {
@@ -12,6 +21,8 @@ export function AdminControlsDialog(props: { onClose: () => void })
     const [ seconds, setSeconds ] = React.useState(String(answerTimeLimit));
     const [ cooldown, setCooldown ] = React.useState(String(answerCooldown));
     const [ queueEnabled, setQueueEnabled ] = React.useState(answerQueueEnabled);
+    const [ joinUrl, setJoinUrl ] = React.useState<string | null>(null);
+    const [ lanError, setLanError ] = React.useState<string | null>(null);
 
     React.useEffect(() =>
     {
@@ -31,6 +42,41 @@ export function AdminControlsDialog(props: { onClose: () => void })
         window.addEventListener("keydown", onKeyDown);
         return () => window.removeEventListener("keydown", onKeyDown);
     }, [ props ]);
+
+    React.useEffect(() =>
+    {
+        let cancelled = false;
+
+        (async () =>
+        {
+            try
+            {
+                const base = config.server.replace(/\/$/, "");
+                const res = await fetch(`${base}/api/lan`);
+                if (!res.ok)
+                    throw new Error(`Ошибка LAN (${res.status})`);
+                const data = await res.json() as { preferred?: string | null; addresses?: string[] };
+                const host = data.preferred || data.addresses?.[0];
+                if (!host)
+                    throw new Error("LAN-адрес не найден");
+                if (!cancelled)
+                {
+                    setJoinUrl(clientJoinUrl(host));
+                    setLanError(null);
+                }
+            }
+            catch (err)
+            {
+                if (!cancelled)
+                {
+                    setJoinUrl(null);
+                    setLanError(err instanceof Error ? err.message : "Не удалось получить LAN");
+                }
+            }
+        })();
+
+        return () => { cancelled = true; };
+    }, []);
 
     const onSave = () =>
     {
@@ -97,6 +143,19 @@ export function AdminControlsDialog(props: { onClose: () => void })
                 />
                 <span>Очередь игроков</span>
             </label>
+            <div className={styles.qr_block}>
+                <span className={styles.label}>Вход для игроков</span>
+                {joinUrl && (
+                    <React.Fragment>
+                        <div className={styles.qr_wrap}>
+                            <QRCodeSVG value={joinUrl} size={160} bgColor="#f7f2dc" fgColor="#080c37" />
+                        </div>
+                        <div className={styles.qr_url}>{joinUrl}</div>
+                    </React.Fragment>
+                )}
+                {!joinUrl && !lanError && <div className={styles.hint}>Ищем LAN-адрес…</div>}
+                {lanError && <div className={styles.error}>{lanError}</div>}
+            </div>
             <div className={styles.hint}>Настройки пишутся в settings.json на сервере.</div>
             <div className={styles.actions}>
                 <button type="button" className={styles.save} onClick={onSave}>Сохранить</button>

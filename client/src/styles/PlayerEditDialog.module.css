@@ -12,6 +12,8 @@
 
 .dialog {
   width: min(100%, 360px);
+  max-height: min(100%, 92vh);
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -21,6 +23,27 @@
   background: linear-gradient(165deg, rgba(26, 34, 136, 0.96) 0%, rgba(8, 12, 55, 0.98) 100%);
   box-shadow: var(--shadow);
   color: var(--gold);
+}
+
+.qr_block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.qr_wrap {
+  padding: 10px;
+  border-radius: 12px;
+  background: #f7f2dc;
+}
+
+.qr_url {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gold-bright);
+  word-break: break-all;
+  text-align: center;
 }
 
 .title {
