@@ -9,3 +9,23 @@
   background: linear-gradient(0deg, rgba(8, 12, 55, 0.95) 0%, rgba(18, 24, 106, 0.55) 100%);
   border-top: 1px solid var(--border);
 }
+
+@media (orientation: portrait) {
+  .players {
+    /* 2 rows: padding + 2×player + gap */
+    --player-row: 54px;
+    flex-shrink: 1;
+    padding: 10px;
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
+    max-height: calc(
+      10px
+      + (2 * var(--player-row))
+      + 8px
+      + max(10px, env(safe-area-inset-bottom))
+    );
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+}
