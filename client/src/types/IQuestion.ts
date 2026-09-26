@@ -11,6 +11,7 @@ export interface IQuestion
     answerPlayer?: string;
     image?: string;
     audio?: string;
+    video?: string;
     catInBag?: boolean;
 }
 

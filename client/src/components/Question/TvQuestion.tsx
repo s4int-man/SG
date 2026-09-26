@@ -17,7 +17,8 @@ import { VideoAnswer } from "./VideoAnswer";
 export function TvQuestion(props: IQuestion)
 {
     const catInBagSelected = useSelector((state: RootState) => state.gameReducer.catInBagSelected);
-    const audio: HTMLAudioElement | null = useAudio(config.server + props.audio);
+    const audio: HTMLAudioElement | null = useAudio(props.audio != null ? config.server + props.audio : undefined);
+    const videoRef = React.useRef<HTMLVideoElement>(null);
 
     const [ answerOpened, setAnswerOpened ] = React.useState(false);
     const [ catInBagPlayed, setCatInBagPlayed ] = React.useState(false);
@@ -25,11 +26,22 @@ export function TvQuestion(props: IQuestion)
     const isImageAnswer = props.answerImage != null;
     const isVideoAnswer = props.answerVideo != null;
     const isAudioAnswer = props.answerAudio != null;
+    const hasQuestionVideo = props.video != null;
+    const showQuestionVideo = hasQuestionVideo && !(answerOpened && (isImageAnswer || isVideoAnswer || isAudioAnswer));
 
-    console.log("video answer", isVideoAnswer);
+    const play = React.useCallback(() =>
+    {
+        if (hasQuestionVideo)
+            void videoRef.current?.play();
+        else
+            void audio?.play();
+    }, [ audio, hasQuestionVideo ]);
 
-    const play = React.useCallback(() => audio?.play(), [ audio ]);
-    const stop = React.useCallback(() => audio?.pause(), [ audio ]);
+    const stop = React.useCallback(() =>
+    {
+        videoRef.current?.pause();
+        audio?.pause();
+    }, [ audio ]);
 
     const openAnswer = React.useCallback(() =>
     {
@@ -37,12 +49,9 @@ export function TvQuestion(props: IQuestion)
 
         stop();
 
-        if (isAudioAnswer || isVideoAnswer)
-            stop();
-
         if (!isAudioAnswer && !isVideoAnswer)
-            audio?.play();
-    }, [ isAudioAnswer, audio, isVideoAnswer, stop ]);
+            play();
+    }, [ isAudioAnswer, isVideoAnswer, play, stop ]);
 
     React.useEffect(() =>
     {
@@ -55,7 +64,7 @@ export function TvQuestion(props: IQuestion)
             socket.off("audioStop", stop);
             socket.off("openAnswer", openAnswer);
             stop();
-        } 
+        };
     }, [ play, stop, openAnswer ]);
 
     const catAudio: HTMLAudioElement | null = useAudio(config.server + "/audio/catInBag.mp3");
@@ -70,7 +79,7 @@ export function TvQuestion(props: IQuestion)
 
     if (props.catInBag && !catInBagSelected && !answerOpened)
         return <CatInBag />;
-    
+
     return <React.Fragment>
         <div className={styles.question}>
             <div className="text">
@@ -78,6 +87,17 @@ export function TvQuestion(props: IQuestion)
             </div>
             {props.image && !answerOpened && <QuestionImage src={props.image} />}
             {props.image && answerOpened && !isImageAnswer && !isVideoAnswer && <QuestionImage src={props.image} />}
+            {showQuestionVideo && (
+                <div className={styles.videoWrap}>
+                    <video
+                        ref={videoRef}
+                        className={styles.video}
+                        src={config.server + props.video}
+                        playsInline
+                        preload="auto"
+                    />
+                </div>
+            )}
             {answerOpened && isImageAnswer && <ImageAnswer answer={props.answerImage!} />}
             {answerOpened && isVideoAnswer && <VideoAnswer answer={props.answerVideo!} />}
             {answerOpened && isAudioAnswer && !isVideoAnswer && <AudioAnswer answer={props.answerAudio!} />}

@@ -95,7 +95,7 @@ export function AdminQuestion(props: IQuestion)
                     <button className={styles.wrong_button} onClick={wrong}>Неверно</button>
                 </React.Fragment>
             }
-            {props.audio != null && !playClicked && <button className={styles.button} onClick={audioPlay}>Воспроизвести</button>}
+            {(props.audio != null || props.video != null) && !playClicked && <button className={styles.button} onClick={audioPlay}>Воспроизвести</button>}
             {answerOpened && <button className={styles.close_button} onClick={closeQuestion}>Закрыть вопрос</button>}
             {answerPlayer == null && !answerOpened && <button className={styles.open_answer_button} onClick={requestOpenAnswer}>Открыть ответ</button>}
         </div>

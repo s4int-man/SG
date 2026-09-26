@@ -12,11 +12,12 @@ type Props = {
 };
 
 type MediaKind = "image" | "audio" | "video";
-type MediaField = "image" | "audio" | "answerImage" | "answerAudio" | "answerVideo";
+type MediaField = "image" | "audio" | "video" | "answerImage" | "answerAudio" | "answerVideo";
 
 const MEDIA_SLOTS: { field: MediaField; kind: MediaKind; label: string; accept: string }[] = [
 	{ field: "image", kind: "image", label: "Изображение вопроса", accept: "image/*" },
 	{ field: "audio", kind: "audio", label: "Аудио вопроса", accept: "audio/*" },
+	{ field: "video", kind: "video", label: "Видео вопроса", accept: "video/*" },
 	{ field: "answerImage", kind: "image", label: "Изображение ответа", accept: "image/*" },
 	{ field: "answerAudio", kind: "audio", label: "Аудио ответа", accept: "audio/*" },
 	{ field: "answerVideo", kind: "video", label: "Видео ответа", accept: "video/*" },
@@ -27,6 +28,7 @@ function mediaFlags(q: IQuestion): string
 	const flags: string[] = [];
 	if (q.image) flags.push("изобр.");
 	if (q.audio) flags.push("аудио");
+	if (q.video) flags.push("видео");
 	if (q.answerImage) flags.push("изобр. ответа");
 	if (q.answerAudio) flags.push("аудио ответа");
 	if (q.answerVideo) flags.push("видео ответа");
