@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { socket } from "../../connection/Client";
 import styles from "../../styles/Question.module.css";
@@ -19,35 +19,27 @@ export function PlayerQuestion(props: IQuestion)
     const passedPlayers = useSelector((state: RootState) => state.gameReducer.passedPlayers);
     const answerPlayer = useSelector((state: RootState) => state.gameReducer.answerPlayer);
     const answerQueueEnabled = useSelector((state: RootState) => state.gameReducer.answerQueueEnabled);
-    const answerCooldown = useSelector((state: RootState) => state.gameReducer.answerCooldown);
+    const answerCooldownTimer = useSelector((state: RootState) => state.gameReducer.answerCooldownTimer);
     const catInBagSelected = useSelector((state: RootState) => state.gameReducer.catInBagSelected);
 
     const [ answerOpened, setAnswerOpened ] = useState(false);
-    const [ secondsToAnswer, setSecondsToAnswer ] = useState<number>(answerCooldown);
-
-    const timeout = useRef<NodeJS.Timeout | null>(null);
 
     const myName = localStorage.getItem("name") || "";
     const inQueue = answerQueue.includes(myName);
     const hasPassed = passedPlayers.includes(myName);
+    const iAmAnswering = answerPlayer != null && answerPlayer.name === myName;
     const someoneAnswering = answerPlayer != null && answerPlayer.name !== myName;
     const canJoinQueue = answerQueueEnabled || !someoneAnswering;
+    const secondsToAnswer = answerCooldownTimer ?? 0;
     const buttonsLocked = secondsToAnswer > 0 && !props.catInBag;
+    const showAnswerButton = !inQueue && canJoinQueue;
+    const showPassButton = !iAmAnswering;
 
     const isImageAnswer = props.answerImage != null;
 
     const onAnswer = () =>
     {
-        if (buttonsLocked)
-        {
-            if (timeout.current != null)
-                clearTimeout(timeout.current);
-
-            setSecondsToAnswer(prev => prev + 1);
-            return;
-        }
-
-        if (inQueue || hasPassed)
+        if (buttonsLocked || inQueue || hasPassed || iAmAnswering)
             return;
 
         socket.emit("answerPlayer", myName);
@@ -55,7 +47,7 @@ export function PlayerQuestion(props: IQuestion)
 
     const onPass = () =>
     {
-        if (hasPassed)
+        if (hasPassed || iAmAnswering)
             return;
 
         socket.emit("passQuestion", myName);
@@ -71,26 +63,6 @@ export function PlayerQuestion(props: IQuestion)
         socket.on("openAnswer", onOpenAnswer);
         return () => void socket.off("openAnswer", onOpenAnswer);
     }, [ onOpenAnswer ]);
-
-    React.useEffect(() =>
-    {
-        setSecondsToAnswer(answerCooldown);
-    }, [ props.id, answerCooldown ]);
-
-    React.useEffect((): void =>
-    {
-        if (secondsToAnswer == 0 || props.catInBag)
-        {
-            if (timeout.current != null)
-                clearTimeout(timeout.current);
-            return;
-        }
-
-        timeout.current = setTimeout(() =>
-        {
-            setSecondsToAnswer(prev => prev - 1);
-        }, 1000);
-    }, [ props.catInBag, secondsToAnswer ]);
 
     if (props.catInBag && !catInBagSelected && !answerOpened)
     {
@@ -119,9 +91,9 @@ export function PlayerQuestion(props: IQuestion)
             {hasPassed && !answerOpened && (
                 <div className={styles.passed_label}>Ты пасанул</div>
             )}
-            {!answerOpened && !hasPassed && !props.catInBag && (
+            {!answerOpened && !hasPassed && !props.catInBag && (showAnswerButton || showPassButton) && (
                 <div className={styles.player_actions}>
-                    {!inQueue && canJoinQueue && (
+                    {showAnswerButton && (
                         <button
                             type="button"
                             data-disabled={String(buttonsLocked)}
@@ -131,13 +103,15 @@ export function PlayerQuestion(props: IQuestion)
                             {buttonsLocked ? secondsToAnswer : "Ответить"}
                         </button>
                     )}
-                    <button
-                        type="button"
-                        className={styles.pass_button}
-                        onClick={onPass}
-                    >
-                        Пас
-                    </button>
+                    {showPassButton && (
+                        <button
+                            type="button"
+                            className={styles.pass_button}
+                            onClick={onPass}
+                        >
+                            Пас
+                        </button>
+                    )}
                 </div>
             )}
         </div>

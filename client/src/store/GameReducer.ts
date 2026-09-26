@@ -17,6 +17,7 @@ interface IGameState
 	answerTimer: number | null;
 	answerQueueEnabled: boolean;
 	answerCooldown: number;
+	answerCooldownTimer: number | null;
 	leaderPlayer?: string;
 	catInBagSelected: boolean;
 }
@@ -34,6 +35,7 @@ const initialState: IGameState = {
 	answerTimer: null,
 	answerQueueEnabled: true,
 	answerCooldown: 5,
+	answerCooldownTimer: null,
 	leaderPlayer: undefined,
 	catInBagSelected: false,
 };
@@ -96,6 +98,11 @@ function setAnswerTimer(state: IGameState, action: PayloadAction<number | null>)
 	state.answerTimer = action.payload;
 }
 
+function setAnswerCooldownTimer(state: IGameState, action: PayloadAction<number | null>): void
+{
+	state.answerCooldownTimer = action.payload;
+}
+
 function setGameSettings(state: IGameState, action: PayloadAction<{ answerTimeLimitSec?: number; answerQueueEnabled?: boolean; answerCooldownSec?: number }>): void
 {
 	if (action.payload.answerTimeLimitSec != null)
@@ -129,6 +136,7 @@ export const GameReducer = createSlice({
 		setPassedPlayers,
 		setAnswerTimeLimit,
 		setAnswerTimer,
+		setAnswerCooldownTimer,
 		setGameSettings,
 		setCurrentRound,
 		setLeaderPlayer,

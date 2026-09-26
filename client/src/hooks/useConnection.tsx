@@ -35,6 +35,7 @@ export function useConnection()
         dispatch(GameReducer.actions.setAnswerPlayer(null));
         dispatch(GameReducer.actions.setPassedPlayers([]));
         dispatch(GameReducer.actions.setAnswerTimer(null));
+        dispatch(GameReducer.actions.setAnswerCooldownTimer(null));
     }, [ navigate, dispatch ]);
     const onToQuestion = React.useCallback(() => {
         if (!isEditor())
@@ -93,6 +94,11 @@ export function useConnection()
         dispatch(GameReducer.actions.setAnswerTimer(secondsLeft));
     }, [ dispatch ]);
 
+    const onAnswerCooldownTimer = React.useCallback((secondsLeft: number | null): void =>
+    {
+        dispatch(GameReducer.actions.setAnswerCooldownTimer(secondsLeft));
+    }, [ dispatch ]);
+
     const onGameSettings = React.useCallback((next: { answerTimeLimitSec?: number; answerQueueEnabled?: boolean; answerCooldownSec?: number }): void =>
     {
         dispatch(GameReducer.actions.setGameSettings(next ?? {}));
@@ -131,6 +137,7 @@ export function useConnection()
         socket.on("passedPlayers", onPassedPlayers);
         socket.on("answerTimeLimit", onAnswerTimeLimit);
         socket.on("answerTimer", onAnswerTimer);
+        socket.on("answerCooldownTimer", onAnswerCooldownTimer);
         socket.on("gameSettings", onGameSettings);
         socket.on("currentRound", onCurrentRound);
         socket.on("leaderPlayer", onLeaderPlayer);
@@ -151,10 +158,11 @@ export function useConnection()
             socket.off("passedPlayers", onPassedPlayers);
             socket.off("answerTimeLimit", onAnswerTimeLimit);
             socket.off("answerTimer", onAnswerTimer);
+            socket.off("answerCooldownTimer", onAnswerCooldownTimer);
             socket.off("gameSettings", onGameSettings);
             socket.off("currentRound", onCurrentRound);
             socket.off("leaderPlayer", onLeaderPlayer);
             socket.off("catInBagSelected", onCatInBagSelected);
         }
-    }, [ onConnect, onToGame, onToQuestion, onPlayers, onProgress, onSelectedQuestion, onQuestion, onAnswerPlayer, onAnswerQueue, onPassedPlayers, onAnswerTimeLimit, onAnswerTimer, onGameSettings, onCurrentRound, onLeaderPlayer, onCatInBagSelected ]);
+    }, [ onConnect, onToGame, onToQuestion, onPlayers, onProgress, onSelectedQuestion, onQuestion, onAnswerPlayer, onAnswerQueue, onPassedPlayers, onAnswerTimeLimit, onAnswerTimer, onAnswerCooldownTimer, onGameSettings, onCurrentRound, onLeaderPlayer, onCatInBagSelected ]);
 }
