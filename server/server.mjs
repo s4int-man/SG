@@ -22,9 +22,12 @@ let answerTimer = null;
 let answerTickInterval = null;
 let answerDeadline = null;
 let answerTimeLimitSec = settings.answerTimeLimitSec;
-let cooldownTimer = null;
+/** @type {Map<string, number>} playerName -> deadline ms */
+const cooldownDeadlines = new Map();
+/** @type {Map<string, import("socket.io").Socket>} */
+const playerSockets = new Map();
 let cooldownTickInterval = null;
-let cooldownDeadline = null;
+let questionCooldownStartedAt = null;
 let currentQuestion = null;
 let currentRound = findCurrentRound();
 let isOpened = false;
@@ -142,23 +145,6 @@ function clearAnswerTimer()
     answerDeadline = null;
 }
 
-function clearCooldownTimer()
-{
-    if (cooldownTimer != null)
-    {
-        clearTimeout(cooldownTimer);
-        cooldownTimer = null;
-    }
-
-    if (cooldownTickInterval != null)
-    {
-        clearInterval(cooldownTickInterval);
-        cooldownTickInterval = null;
-    }
-
-    cooldownDeadline = null;
-}
-
 function secondsLeftUntil(deadline)
 {
     if (deadline == null)
@@ -167,19 +153,144 @@ function secondsLeftUntil(deadline)
     return Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
 }
 
-function isCooldownActive()
+function bindPlayerSocket(name, socket)
 {
-    return cooldownDeadline != null && Date.now() < cooldownDeadline;
+    playerSockets.set(name, socket);
+}
+
+function unbindPlayerSocket(name, socket)
+{
+    if (playerSockets.get(name) === socket)
+        playerSockets.delete(name);
+}
+
+function emitCooldownToPlayer(name, secondsLeft)
+{
+    const sock = playerSockets.get(name);
+    if (sock != null)
+        sock.emit("answerCooldownTimer", secondsLeft);
+}
+
+function stopCooldownTickerIfIdle()
+{
+    if (cooldownDeadlines.size > 0)
+        return;
+
+    if (cooldownTickInterval != null)
+    {
+        clearInterval(cooldownTickInterval);
+        cooldownTickInterval = null;
+    }
+}
+
+function tickPlayerCooldowns()
+{
+    const now = Date.now();
+    for (const [ name, deadline ] of [ ...cooldownDeadlines.entries() ])
+    {
+        const left = Math.max(0, Math.ceil((deadline - now) / 1000));
+        emitCooldownToPlayer(name, left);
+        if (left <= 0)
+            cooldownDeadlines.delete(name);
+    }
+    stopCooldownTickerIfIdle();
+}
+
+function ensureCooldownTicker()
+{
+    if (cooldownTickInterval != null)
+        return;
+
+    cooldownTickInterval = setInterval(tickPlayerCooldowns, 1000);
+}
+
+function clearCooldownTimer()
+{
+    const names = new Set([
+        ...cooldownDeadlines.keys(),
+        ...getEligiblePlayers().map(p => p.name),
+    ]);
+
+    if (cooldownTickInterval != null)
+    {
+        clearInterval(cooldownTickInterval);
+        cooldownTickInterval = null;
+    }
+
+    cooldownDeadlines.clear();
+    questionCooldownStartedAt = null;
+
+    for (const name of names)
+        emitCooldownToPlayer(name, null);
+}
+
+function isCooldownActive(name)
+{
+    const deadline = cooldownDeadlines.get(name);
+    return deadline != null && Date.now() < deadline;
+}
+
+function setPlayerCooldown(name, deadlineMs)
+{
+    cooldownDeadlines.set(name, deadlineMs);
+    emitCooldownToPlayer(name, secondsLeftUntil(deadlineMs));
+    ensureCooldownTicker();
+}
+
+function extendPlayerCooldown(name, extraSec = 1)
+{
+    const deadline = cooldownDeadlines.get(name);
+    if (deadline == null || Date.now() >= deadline)
+        return false;
+
+    const next = deadline + extraSec * 1000;
+    setPlayerCooldown(name, next);
+    console.log("cooldown penalty", name, secondsLeftUntil(next));
+    return true;
+}
+
+function syncCooldownForPlayer(name)
+{
+    if (name == null || name === EMCEE || name === TV)
+        return;
+
+    if (
+        currentQuestion == null
+        || isOpened
+        || currentQuestion.catInBag
+    )
+    {
+        emitCooldownToPlayer(name, null);
+        return;
+    }
+
+    const existing = cooldownDeadlines.get(name);
+    if (existing != null)
+    {
+        emitCooldownToPlayer(name, secondsLeftUntil(existing));
+        return;
+    }
+
+    const cooldownSec = Number(settings.answerCooldownSec) || 0;
+    if (cooldownSec <= 0 || questionCooldownStartedAt == null)
+    {
+        emitCooldownToPlayer(name, null);
+        return;
+    }
+
+    const left = Math.max(0, Math.ceil((questionCooldownStartedAt + cooldownSec * 1000 - Date.now()) / 1000));
+    if (left <= 0)
+    {
+        emitCooldownToPlayer(name, 0);
+        return;
+    }
+
+    setPlayerCooldown(name, Date.now() + left * 1000);
 }
 
 function emitAnswerTimer(ioServer, secondsLeft)
 {
     ioServer.sockets.emit("answerTimer", secondsLeft);
-}
-
-function emitCooldownTimer(ioServer, secondsLeft)
-{
-    ioServer.sockets.emit("answerCooldownTimer", secondsLeft);
 }
 
 function emitAnswerTimeLimit(ioServer)
@@ -261,7 +372,7 @@ function startAnswerTimer(ioServer)
     }, answerTimeLimitSec * 1000);
 }
 
-function startCooldownTimer(ioServer)
+function startCooldownTimer(_ioServer)
 {
     clearCooldownTimer();
 
@@ -272,38 +383,13 @@ function startCooldownTimer(ioServer)
         || isOpened
         || currentQuestion.catInBag
     )
-    {
-        emitCooldownTimer(ioServer, null);
         return;
-    }
 
-    cooldownDeadline = Date.now() + cooldownSec * 1000;
+    questionCooldownStartedAt = Date.now();
+    const deadline = questionCooldownStartedAt + cooldownSec * 1000;
 
-    const tick = () =>
-    {
-        if (cooldownDeadline == null)
-        {
-            emitCooldownTimer(ioServer, null);
-            return;
-        }
-
-        emitCooldownTimer(ioServer, secondsLeftUntil(cooldownDeadline));
-    };
-
-    tick();
-    cooldownTickInterval = setInterval(tick, 1000);
-
-    cooldownTimer = setTimeout(() =>
-    {
-        cooldownTimer = null;
-        if (cooldownTickInterval != null)
-        {
-            clearInterval(cooldownTickInterval);
-            cooldownTickInterval = null;
-        }
-        cooldownDeadline = null;
-        emitCooldownTimer(ioServer, 0);
-    }, cooldownSec * 1000);
+    for (const player of getEligiblePlayers())
+        setPlayerCooldown(player.name, deadline);
 }
 
 function syncAnswerState(io)
@@ -365,7 +451,6 @@ function tryAutoOpenIfAllPassed(ioServer)
     isOpened = true;
     clearAnswerQueue(ioServer);
     clearCooldownTimer();
-    emitCooldownTimer(ioServer, null);
     ioServer.sockets.emit("openAnswer");
 }
 
@@ -576,7 +661,6 @@ io.on("connection", (socket) => {
         saveProgress(progress);
 
         clearCooldownTimer();
-        emitCooldownTimer(io, null);
 
         io.sockets.emit("openAnswer");
         io.sockets.emit("progress", progress);
@@ -624,6 +708,7 @@ io.on("connection", (socket) => {
     {
         console.log(name, "logged in");
         socketName = name;
+        bindPlayerSocket(name, socket);
 
         addPlayer(name);
         savePlayers(players);
@@ -634,7 +719,7 @@ io.on("connection", (socket) => {
         emitAnswerTimeLimit(io);
         emitGameSettings(io);
         socket.emit("answerTimer", secondsLeftUntil(answerDeadline));
-        socket.emit("answerCooldownTimer", secondsLeftUntil(cooldownDeadline));
+        syncCooldownForPlayer(name);
         io.sockets.emit("players", players);
 
         if (currentQuestion == null)
@@ -649,12 +734,13 @@ io.on("connection", (socket) => {
             emitAnswerTimeLimit(io);
             emitGameSettings(io);
             socket.emit("answerTimer", secondsLeftUntil(answerDeadline));
-            socket.emit("answerCooldownTimer", secondsLeftUntil(cooldownDeadline));
+            syncCooldownForPlayer(name);
         }
 
         socket.once("disconnect", () =>
         {
             console.log(name, "disconnected");
+            unbindPlayerSocket(name, socket);
             disconnectPlayer(name);
             socket.broadcast.emit("players", players);
         });
@@ -678,7 +764,6 @@ io.on("connection", (socket) => {
         clearAnswerQueue(io);
         clearPassedPlayers(io);
         clearCooldownTimer();
-        emitCooldownTimer(io, null);
         roundId = _roundId;
         category = _category;
         questionId = _questionId;
@@ -704,14 +789,14 @@ io.on("connection", (socket) => {
             return;
         }
 
-        if (isCooldownActive())
-        {
-            console.log("answer ignored: cooldown", name, secondsLeftUntil(cooldownDeadline));
-            return;
-        }
-
         if (name == null || name === EMCEE || name === TV)
             return;
+
+        if (isCooldownActive(name))
+        {
+            extendPlayerCooldown(name, 1);
+            return;
+        }
 
         if (passedPlayers.includes(name))
         {
@@ -746,7 +831,6 @@ io.on("connection", (socket) => {
         clearAnswerQueue(io);
         clearPassedPlayers(io);
         clearCooldownTimer();
-        emitCooldownTimer(io, null);
         console.log("catInBagPlayer", roundId, category, questionId, playerName);
         io.sockets.emit("selected", { roundId, category, questionId });
         setLeaderPlayer(playerName, io);
@@ -799,7 +883,6 @@ io.on("connection", (socket) => {
         clearAnswerTimer();
         emitAnswerTimer(io, null);
         clearCooldownTimer();
-        emitCooldownTimer(io, null);
         isOpened = true;
         io.sockets.emit("openAnswer");
     });

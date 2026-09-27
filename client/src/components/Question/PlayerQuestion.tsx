@@ -39,7 +39,7 @@ export function PlayerQuestion(props: IQuestion)
 
     const onAnswer = () =>
     {
-        if (buttonsLocked || inQueue || hasPassed || iAmAnswering)
+        if (inQueue || hasPassed || iAmAnswering)
             return;
 
         socket.emit("answerPlayer", myName);
