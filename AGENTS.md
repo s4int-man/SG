@@ -21,10 +21,10 @@
 ## Структура репозитория
 
 ```
-server/                Node-сервер: Express + Socket.IO, состояние в JSON-файлах
+server/                Node-сервер: Express 5 + Socket.IO, состояние в JSON-файлах
 ├── server.mjs         вся игровая логика (ПОКА JavaScript)
-├── progressUtils.ts   загрузка/сохранение progress, players, settings (TypeScript)
-├── progressUtils.mjs  устаревшая JS-копия — удалить при переносе server.ts
+├── progressUtils.mjs  загрузка/сохранение progress, players, settings (тоже пока JS)
+├── package.json       ESM ("type": "module"), Express 5, tsx + typescript в dev
 ├── types/             контракты и типы (см. раздел «Миграция в TypeScript»)
 ├── public/            статика: медиа вопросов + собранный клиент (в .gitignore)
 ├── progress.json      текущая игра: раунды → категории → вопросы + прогресс
@@ -52,6 +52,7 @@ game-1.json, game-test.json   образцы паков вопросов для 
 
 | Что | Команда | Примечание |
 |---|---|---|
+| Зависимости сервера | `cd server && npm install` | лок — `server/package-lock.json`, должен содержать `typescript`/`tsx` |
 | Сервер (сейчас) | `cd server && node server.mjs` | порт 4000 |
 | Сервер (после переноса) | `cd server && npm run dev` / `npm start` | `tsx watch server.ts` — **файла `server.ts` ещё нет** |
 | Проверка типов сервера | `cd server && npm run typecheck` | он же `npx tsc --noEmit` |
@@ -61,6 +62,8 @@ game-1.json, game-test.json   образцы паков вопросов для 
 Обязательные тонкости:
 
 - **Рабочая директория сервера — `server/`.** `progressUtils` открывает `progress.json`, `players.json`, `settings.json` по относительным путям, то есть относительно `cwd`. Запуск из корня репозитория даст `ENOENT`.
+- **`server/package.json` — ESM: `"type": "module"`, `engines.node >= 20`.** Любой новый `.ts`/`.js` в `server/` считается ESM-модулем, `require()` в нём недоступен (нужен `createRequire`). Раньше поля не было, `.mjs` спасали только расширением.
+- **Запуск TS — только через `tsx`.** `tsconfig` использует `moduleResolution: "Bundler"`, поэтому импорты пишутся без расширений; нативный `node server.ts` (Node 24 умеет вырезать типы) на таких импортах падает с `ERR_MODULE_NOT_FOUND`. Если захочется обходиться без `tsx` — переводить `module`/`moduleResolution` на `"NodeNext"` и дописывать расширения в импортах.
 - Сервер слушает `listen(port)` без хоста, то есть на всех интерфейсах. Переменная `hostname = "localhost"` в `server.mjs` участвует только в тексте лога и ни на что не влияет.
 - Клиент подключается к захардкоженному `config.server` (например `http://192.168.0.8:4000`). При смене машины/подсети править `client/src/config.json`, а не переменные окружения — их нет.
 - `server/public` лежит в `.gitignore`: там лежат медиа вопросов и, при деплое, собранный клиент. Скрипта-копирователя в репозитории нет — `client/build` переносится вручную; `homepage` в `client/package.json` не задан, поэтому ассеты отдаются от корня (что и нужно, когда статику раздаёт сервер). В гите только исходники медиа (`public/audio`, `public/images`).
@@ -177,7 +180,9 @@ game-1.json, game-test.json   образцы паков вопросов для 
 
 ## Миграция в TypeScript (в процессе)
 
-Сделано: `progressUtils.ts`, `tsconfig.json`, `types/`, `package.json` (скрипты `dev`/`start` уже смотрят на `tsx server.ts`, **но `server.ts` ещё не создан** — сервер по-прежнему запускается через `node server.mjs`).
+Сделано: `tsconfig.json`, `types/`, `package.json`. Тулчейн собран и проверен — `npm run typecheck` (`tsc --noEmit`, `typescript@7.0.2`) проходит чисто, `npm audit` чистый. Мажоры согласованы: `express@^5` + `@types/express@^5`, `@types/node@^24` под рантайм Node 24, `tsx@^4`.
+
+Скрипты `dev`/`start` уже смотрят на `tsx server.ts`, **но `server.ts` ещё не создан** — сервер по-прежнему запускается через `node server.mjs`. **`progressUtils.ts` тоже не существует** — загрузка и сохранение JSON до сих пор живут в `progressUtils.mjs`, и это первый кандидат на перенос.
 
 Правила, которые приняты и их надо придерживаться:
 
@@ -201,9 +206,9 @@ game-1.json, game-test.json   образцы паков вопросов для 
    ```
 3. `tsconfig.json` — `strict: true`, `noEmit: true`, `moduleResolution: "Bundler"`, `include: ["*.ts", "types/**/*.ts"]`. **При добавлении новой папки проверять `npx tsc --showConfig`** — файлы вне `include` молча не проверяются.
 4. Socket.IO типизуется дженериками: `new GameIoServer(httpServer, ...)` и `(socket: GameSocket) => ...`. Тогда `emit`/`on` проверяют и имя события, и payload.
-5. `progressUtils.ts` реэкспортирует доменные типы (`export type { IPlayer } from "./types/domain/IPlayer"`) — сохранено для совместимости, новые импорты лучше писать напрямую из `types/`.
+5. `progressUtils` ещё не перенесён: `server.mjs` импортирует `loadProgress`/`loadPlayers`/`loadSettings`/`saveProgress`/`savePlayers`/`saveSettings` из `./progressUtils.mjs`. При переносе в `progressUtils.ts` доменные типы импортировать напрямую из `types/`, реэкспортов «для совместимости» не заводить.
 6. При переносе кода в `server.ts` не «глушить» строгость: `findQuestion` возвращает `IQuestion | undefined`, `players.find(...)` в обработчике `right` разыменовывается без проверки — это реальные дыры, их надо закрывать проверками, а не `!` и не `any`.
-7. `progressUtils.mjs` — мёртвая копия, удалить вместе с `server.mjs` после переноса.
+7. `progressUtils.mjs` — **живой** модуль (его импортирует `server.mjs`), а не мёртвая копия: он переносится в `progressUtils.ts`, и только после этого оба `.mjs` удаляются.
 
 ## Клиент (`client/`)
 
@@ -225,7 +230,7 @@ game-1.json, game-test.json   образцы паков вопросов для 
 5. `answerCooldownTimer` и `answerTimer` — адресные/массовые рассылки с `null`, означающим «таймера нет». Клиент хранит `null` как «нет таймера», а не `0`.
 6. `setAnswerTimeLimit` — устаревший дубль `setGameSettings`, оставлен для совместимости со старыми сборками клиента.
 7. `requireLocalhost` блокирует API редактора не с localhost: если сервер поднят в Docker/на ВМ, редактор оттуда не заработает.
-8. `@types/express@^5` при `express@^4` в зависимостях — мажоры не совпадают. Если типы начнут противоречить рантайму, ставить `@types/express@^4.17.21`.
+8. Мажоры `express` и `@types/express` согласованы (оба 5) — так и держать. `@types/node` привязан к мажору рантайма: стоит `^24` под Node 24.13. При обновлении Node обновлять и `@types/node`, иначе typecheck начнёт разрешать API, которых в рантайме нет.
 9. Версии: `typescript@7.0.2` на сервере (нативный компилятор) и `typescript@^4.9.5` в клиенте — API разных поколений, не переносить синтаксис «в лоб» между проектами.
 10. `findCurrentRound()` в цикле доходит до `progress.rounds.length` — опирается на то, что `roundFinished()` для индекса за границей возвращает `true`.
 11. Никакой валидации payload'ов сокетов нет: сервер доверяет клиенту (`updatePlayerScore` приводит к числу, остальное — как пришло).
@@ -234,7 +239,7 @@ game-1.json, game-test.json   образцы паков вопросов для 
 ## Конвенции
 
 - Кодинг-стайл: 4 пробела, **Allman-скобки** — открывающая скобка функции/блока на отдельной строке; `if`/`else` со скобками даже на одну строку. Тот же стиль и в клиенте.
-- Комментарии и сообщения в коде — по-русски допустимы (так уже в `server.mjs`, `types/`, `progressUtils.ts`).
+- Комментарии и сообщения в коде — по-русски допустимы (так уже в `server.mjs`, `types/`, `progressUtils.mjs`).
 - Коммиты — короткий императив на английском: `Implement ...`, `Add ...`, `Refactor ...`, `fix styles`.
 - Типы: префикс `I` для доменных интерфейсов (`IPlayer`, `IQuestion`), без `I` — для контрактов протокола и настроек (`GameSettings`, `ServerToClientEvents`).
 - Избегать `any` и `!`: в `server/` включён `strict`, проверка — `npm run typecheck`.
@@ -242,17 +247,23 @@ game-1.json, game-test.json   образцы паков вопросов для 
 ## Как проверять свою работу
 
 ```bash
+cd server && npm install                # после правки package.json — обязательно обновить package-lock.json
 cd server && npm run typecheck          # tsc --noEmit, должен быть чисто
 cd server && npx tsc --showConfig       # все нужные файлы в программе компиляции
 cd server && node server.mjs            # должен напечатать "> Ready on http://localhost:4000"
+curl http://127.0.0.1:4000/api/lan      # 200 + {"addresses":[...],"preferred":...} — REST жив
 cd client && npm start                  # CRA соберёт без ошибок типов
 ```
+
+После любой правки зависимостей проверять, что в `server/package-lock.json` есть записи `typescript`, `tsx`, `@types/express` — иначе `npm ci` на свежем кллоне поставит только express + socket.io, и `npm run typecheck` / `npm run dev` упадут.
 
 Быстрая ручная проверка сценария: открыть `:3000` под именем `Admin` (ведущий), `TV` (экран) и любым именем (игрок) → выбрать вопрос → игрок жмёт «Отвечать» → ведущий «Верно/Неверно» → смена раунда.
 
 ## Что дальше (известные задачи)
 
-1. Перенести `server.mjs` → `server.ts` (скрипты уже настроены), типизовав состояние через `ServerState` и сокеты через `GameIoServer`/`GameSocket`; попутно закрыть `undefined`-дыры из п. 6 раздела про миграцию.
-2. Удалить `server.mjs` и `progressUtils.mjs` после переноса.
-3. Решить с дублированием типов клиент/сервер (общая папка или пакет — упирается в ограничения CRA).
-4. Опционально: вынести константы (`EMCEE`, `TV`, `QUESTION_SELECT_HIGHLIGHT_MS`) в один источник, чтобы не держать их в двух местах.
+1. Перенести `progressUtils.mjs` → `progressUtils.ts` (типизация через `types/domain` и `types/settings`) — шаг блокирующий: `server.ts` должен импортировать уже TS-модуль.
+2. Перенести `server.mjs` → `server.ts` (скрипты уже настроены), типизовав состояние через `ServerState` и сокеты через `GameIoServer`/`GameSocket`; попутно закрыть `undefined`-дыры из п. 6 раздела про миграцию.
+3. Удалить `server.mjs` и `progressUtils.mjs` после переноса.
+4. Решить с дублированием типов клиент/сервер (общая папка или пакет — упирается в ограничения CRA).
+5. Опционально: вынести константы (`EMCEE`, `TV`, `QUESTION_SELECT_HIGHLIGHT_MS`) в один источник, чтобы не держать их в двух местах.
+6. Опционально: перевести `tsconfig.json` с `moduleResolution: "Bundler"` на `"NodeNext"` — тогда сервер можно будет запускать нативным `node server.ts` без `tsx` (потребует расширений в импортах).
